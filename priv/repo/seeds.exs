@@ -9,3 +9,16 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+
+alias Grantland.Accounts
+
+roles = [
+  %{name: "Admin"},
+  %{name: "Moderator"},
+  %{name: "User"},
+  %{name: "Guest"}
+]
+
+Enum.each(roles, fn role ->
+  Accounts.create_role(role)
+end)
