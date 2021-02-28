@@ -1,0 +1,22 @@
+<h1>Show Pool</h1>
+
+<%= if @live_action in [:edit] do %>
+  <%= live_modal @socket, GrantlandWeb.PoolLive.FormComponent,
+    id: @pool.id,
+    title: @page_title,
+    action: @live_action,
+    pool: @pool,
+    return_to: Routes.pool_show_path(@socket, :show, @pool) %>
+<% end %>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @pool.name %>
+  </li>
+
+</ul>
+
+<span><%= live_patch "Edit", to: Routes.pool_show_path(@socket, :edit, @pool), class: "button" %></span>
+<span><%= live_redirect "Back", to: Routes.pool_index_path(@socket, :index) %></span>
