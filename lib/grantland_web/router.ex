@@ -19,6 +19,14 @@ defmodule GrantlandWeb.Router do
 
     live "/", PageLive, :index
 
+    # Entries
+    live "/entries", EntryLive.Index, :index
+    live "/entries/new", EntryLive.Index, :new
+    live "/entries/:id/edit", EntryLive.Index, :edit
+
+    live "/entries/:id", EntryLive.Show, :show
+    live "/entries/:id/show/edit", EntryLive.Show, :edit
+
     # Pools
     live "/pools", PoolLive.Index, :index
     live "/pools/new", PoolLive.Index, :new

@@ -153,6 +153,7 @@ defmodule Grantland.Accounts do
          |> User.changeset(attrs)
          |> Repo.insert() do
       {:ok, user} -> broadcast({:ok, Repo.preload(user, :role)}, :user_created)
+      {:error, changeset} -> broadcast({:error, changeset}, :user_created)
     end
   end
 
@@ -173,6 +174,7 @@ defmodule Grantland.Accounts do
          |> User.changeset(attrs)
          |> Repo.update() do
       {:ok, user} -> broadcast({:ok, Repo.preload(user, :role)}, :user_updated)
+      {:error, changeset} -> broadcast({:error, changeset}, :user_updated)
     end
   end
 
