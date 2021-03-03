@@ -1,0 +1,36 @@
+<h2><%= @title %></h2>
+
+<%= f = form_for @changeset, "#",
+  id: "game-form",
+  phx_target: @myself,
+  phx_change: "validate",
+  phx_submit: "save" %>
+
+  <%= label f, :home_team %>
+  <%= select f, :home_team, Enum.map(@teams, &{&1.short_name, &1.key}) %>
+  <%= error_tag f, :home_team %>
+
+  <%= label f, :away_team %>
+  <%= select f, :away_team, Enum.map(@teams, &{&1.short_name, &1.key}) %>
+  <%= error_tag f, :away_team %>
+
+  <%= label f, :home_score %>
+  <%= number_input f, :home_score %>
+  <%= error_tag f, :home_score %>
+
+  <%= label f, :away_score %>
+  <%= number_input f, :away_score %>
+  <%= error_tag f, :away_score %>
+
+  <%= label f, :status %>
+  <%= select f, :status, @statuses %>
+  <%= error_tag f, :status %>
+
+  <%= label f, :time %>
+  <%= datetime_select f, :time %>
+  <%= error_tag f, :time %>
+
+  <div>
+    <%= submit "Save", phx_disable_with: "Saving..." %>
+  </div>
+</form>
