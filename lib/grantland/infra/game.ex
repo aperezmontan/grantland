@@ -1,4 +1,4 @@
-defmodule Grantland.Infra.Game do
+defmodule Grantland.Data.Game do
   use Ecto.Schema
   import Ecto.Changeset
 

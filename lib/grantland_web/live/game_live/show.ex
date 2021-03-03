@@ -1,7 +1,7 @@
 defmodule GrantlandWeb.GameLive.Show do
   use GrantlandWeb, :live_view
 
-  alias Grantland.Infra
+  alias Grantland.Data
 
   @impl true
   def mount(_params, _session, socket) do
@@ -13,7 +13,7 @@ defmodule GrantlandWeb.GameLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:game, Infra.get_game!(id))}
+     |> assign(:game, Data.get_game!(id))}
   end
 
   defp page_title(:show), do: "Show Game"

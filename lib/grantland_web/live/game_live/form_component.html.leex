@@ -7,11 +7,11 @@
   phx_submit: "save" %>
 
   <%= label f, :home_team %>
-  <%= select f, :home_team, Enum.map(@teams, &{&1.short_name, &1.key}) %>
+  <%= select f, :home_team, @teams %>
   <%= error_tag f, :home_team %>
 
   <%= label f, :away_team %>
-  <%= select f, :away_team, Enum.map(@teams, &{&1.short_name, &1.key}) %>
+  <%= select f, :away_team, @teams %>
   <%= error_tag f, :away_team %>
 
   <%= label f, :home_score %>

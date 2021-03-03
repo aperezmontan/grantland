@@ -3,7 +3,7 @@ defmodule GrantlandWeb.GameLiveTest do
 
   import Phoenix.LiveViewTest
 
-  alias Grantland.Infra
+  alias Grantland.Data
 
   @create_attrs %{
     away_score: 42,
@@ -22,7 +22,7 @@ defmodule GrantlandWeb.GameLiveTest do
   @invalid_attrs %{away_score: nil, away_team: nil, home_score: nil, home_team: nil, status: nil}
 
   defp fixture(:game) do
-    {:ok, game} = Infra.create_game(@create_attrs)
+    {:ok, game} = Data.create_game(@create_attrs)
     game
   end
 

@@ -1,4 +1,4 @@
-defmodule Grantland.Infra.Views.Game do
+defmodule Grantland.Data.Views.Game do
   @moduledoc """
   This is the Game View module.
   """

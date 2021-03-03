@@ -1,12 +1,12 @@
 defmodule GrantlandWeb.GameLive.Index do
   use GrantlandWeb, :live_view
 
-  alias Grantland.Infra
-  alias Grantland.Infra.{College, Game}
+  alias Grantland.Data
+  alias Grantland.Data.{College, Game}
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket), do: Infra.subscribe()
+    if connected?(socket), do: Data.subscribe()
 
     teams = Enum.map(College.teams(), fn {_key, value} -> value end)
     socket = assign(socket, teams: teams)
@@ -22,7 +22,7 @@ defmodule GrantlandWeb.GameLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Game")
-    |> assign(:game, Infra.get_game!(id))
+    |> assign(:game, Data.get_game!(id))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -39,9 +39,9 @@ defmodule GrantlandWeb.GameLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    game = Infra.get_game!(id)
+    game = Data.get_game!(id)
 
-    case Infra.delete_game(game) do
+    case Data.delete_game(game) do
       {:ok, _user} ->
         teams = Enum.map(College.teams(), fn {_key, value} -> value end)
         socket = assign(socket, teams: teams)
@@ -72,10 +72,10 @@ defmodule GrantlandWeb.GameLive.Index do
   end
 
   defp game_for_view(game) do
-    Infra.game_for_view(game)
+    Data.game_for_view(game)
   end
 
   defp list_games_for_view do
-    Infra.list_games_for_view()
+    Data.list_games_for_view()
   end
 end

@@ -1,4 +1,4 @@
-defmodule Grantland.Infra.College do
+defmodule Grantland.Data.College do
   @moduledoc """
   This is the College module. It creates college teams.
   """
@@ -12,13 +12,13 @@ defmodule Grantland.Infra.College do
 
   ## Examples
 
-      iex> Grantland.Infra.College.new(0)
+      iex> Grantland.Data.College.new(0)
       {:ok, %College{key: 0, name: "Michigan Wolverines", short_name: "UM"}}
 
-      iex> Grantland.Infra.College.new("foo")
+      iex> Grantland.Data.College.new("foo")
       {:error, :invalid_key}
 
-      iex> Grantland.Infra.College.new(100000)
+      iex> Grantland.Data.College.new(100000)
       {:error, :team_not_found}
 
   """
@@ -34,7 +34,7 @@ defmodule Grantland.Infra.College do
 
   ## Examples
 
-      iex> Grantland.Infra.College.teams
+      iex> Grantland.Data.College.teams
       %{
         0 => %College{key: 0, name: "Michigan Wolverines", short_name: "UM"},
         1 => %College{key: 1, name: "North Carolina Tar Heels", short_name: "UNC"}

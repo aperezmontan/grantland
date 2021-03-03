@@ -1,12 +1,12 @@
-defmodule Grantland.Infra do
+defmodule Grantland.Data do
   @moduledoc """
-  The Infra context.
+  The Data context.
   """
 
   import Ecto.Query, warn: false
   alias Grantland.Repo
 
-  alias Grantland.Infra.{College, Game, Views}
+  alias Grantland.Data.{College, Game, Views}
 
   @doc """
   Returns the list of games.
@@ -118,6 +118,20 @@ defmodule Grantland.Infra do
     Game.changeset(game, attrs)
   end
 
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking game changes.
+
+  ## Examples
+
+      iex> change_game(game)
+      %Ecto.Changeset{data: %Game{}}
+
+  """
+  def college_teams_for_view do
+    Enum.map(College.teams(), fn {_key, value} -> value end)
+    |> Enum.map(&{&1.short_name, &1.key})
+  end
+
   def game_for_view(game) do
     {:ok, home_team} = College.team(game.home_team)
     {:ok, away_team} = College.team(game.away_team)
@@ -132,6 +146,10 @@ defmodule Grantland.Infra do
       status: game.status,
       time: game.time
     }
+  end
+
+  def statuses_for_view do
+    Enum.map(Ecto.Enum.values(Game, :status), &{Phoenix.Naming.humanize(&1), &1})
   end
 
   def subscribe do
