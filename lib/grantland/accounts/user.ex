@@ -2,12 +2,17 @@ defmodule Grantland.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Grantland.Accounts.Role
-
   schema "users" do
     field :name, :string
 
-    belongs_to :role, Role
+    field :role, Ecto.Enum,
+      values: [
+        :admin,
+        :moderator,
+        :user,
+        :guest
+      ],
+      default: :guest
 
     timestamps()
   end
@@ -15,8 +20,8 @@ defmodule Grantland.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:name, :role_id])
-    |> validate_required([:name, :role_id])
+    |> cast(attrs, [:name, :role])
+    |> validate_required([:name, :role])
     |> validate_length(:name, min: 3)
     |> unique_constraint(:name)
   end
