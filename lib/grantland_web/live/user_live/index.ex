@@ -1,12 +1,12 @@
 defmodule GrantlandWeb.UserLive.Index do
   use GrantlandWeb, :live_view
 
-  alias Grantland.Accounts
-  alias Grantland.Accounts.User
+  alias Grantland.Identity
+  alias Grantland.Identity.User
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket), do: Accounts.subscribe()
+    if connected?(socket), do: Identity.subscribe()
     {:ok, assign(socket, :users, list_users()), temporary_assigns: [users: []]}
   end
 
@@ -18,7 +18,7 @@ defmodule GrantlandWeb.UserLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit User")
-    |> assign(:user, Accounts.get_user!(id))
+    |> assign(:user, Identity.get_user!(id))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -35,9 +35,9 @@ defmodule GrantlandWeb.UserLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    user = Accounts.get_user!(id)
+    user = Identity.get_user!(id)
 
-    case Accounts.delete_user(user) do
+    case Identity.delete_user(user) do
       {:ok, _user} ->
         {
           :noreply,
@@ -65,6 +65,6 @@ defmodule GrantlandWeb.UserLive.Index do
   end
 
   defp list_users do
-    Accounts.list_users()
+    Identity.list_users()
   end
 end

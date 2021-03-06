@@ -32,4 +32,6 @@
   </tbody>
 </table>
 
-<span><%= live_patch "New Pool", to: Routes.pool_index_path(@socket, :new) %></span>
+<%= if @current_user do %>
+  <span><%= live_patch "New Pool", to: Routes.pool_index_path(@socket, :new) %></span>
+<% end %>

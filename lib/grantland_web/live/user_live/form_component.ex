@@ -1,18 +1,20 @@
 defmodule GrantlandWeb.UserLive.FormComponent do
   use GrantlandWeb, :live_component
 
-  alias Grantland.Accounts
+  alias Grantland.Identity
 
   @impl true
   def mount(socket) do
-    roles = Accounts.list_roles()
-    socket = assign(socket, roles: roles)
+    socket =
+      socket
+      |> assign(roles: Identity.roles_for_view())
+
     {:ok, socket}
   end
 
   @impl true
   def update(%{user: user} = assigns, socket) do
-    changeset = Accounts.change_user(user)
+    changeset = Identity.change_user(user)
 
     {:ok,
      socket
@@ -24,7 +26,7 @@ defmodule GrantlandWeb.UserLive.FormComponent do
   def handle_event("validate", %{"user" => user_params}, socket) do
     changeset =
       socket.assigns.user
-      |> Accounts.change_user(user_params)
+      |> Identity.change_user(user_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, :changeset, changeset)}
@@ -35,7 +37,7 @@ defmodule GrantlandWeb.UserLive.FormComponent do
   end
 
   defp save_user(socket, :edit, user_params) do
-    case Accounts.update_user(socket.assigns.user, user_params) do
+    case Identity.update_user(socket.assigns.user, user_params) do
       {:ok, _user} ->
         {:noreply,
          socket
@@ -48,7 +50,7 @@ defmodule GrantlandWeb.UserLive.FormComponent do
   end
 
   defp save_user(socket, :new, user_params) do
-    case Accounts.create_user(user_params) do
+    case Identity.create_user(user_params) do
       {:ok, _user} ->
         {:noreply,
          socket

@@ -18,5 +18,7 @@
 
 </ul>
 
-<span><%= live_patch "Edit", to: Routes.pool_show_path(@socket, :edit, @pool), class: "button" %></span>
+<%= if @current_user do %>
+  <span><%= live_patch "Edit", to: Routes.pool_show_path(@socket, :edit, @pool), class: "button" %></span>
+<% end %>
 <span><%= live_redirect "Back", to: Routes.pool_index_path(@socket, :index) %></span>
