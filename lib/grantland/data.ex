@@ -153,13 +153,13 @@ defmodule Grantland.Data do
   end
 
   def subscribe do
-    Phoenix.PubSub.subscribe(Grantland.PubSub, "infra")
+    Phoenix.PubSub.subscribe(Grantland.PubSub, "data")
   end
 
   defp broadcast({:error, _reason} = error, _event), do: error
 
   defp broadcast({:ok, game}, event) do
-    Phoenix.PubSub.broadcast(Grantland.PubSub, "infra", {event, game})
+    Phoenix.PubSub.broadcast(Grantland.PubSub, "data", {event, game})
     {:ok, game}
   end
 end

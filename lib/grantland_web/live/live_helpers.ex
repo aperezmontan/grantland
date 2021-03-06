@@ -4,7 +4,6 @@ defmodule GrantlandWeb.LiveHelpers do
 
   alias Grantland.Identity
   alias Grantland.Identity.User
-  alias GrantlandWeb.Router.Helpers, as: Routes
 
   @doc """
   Renders a component inside the `GrantlandWeb.ModalComponent` component.
@@ -22,25 +21,29 @@ defmodule GrantlandWeb.LiveHelpers do
   """
   def live_modal(socket, component, opts) do
     path = Keyword.fetch!(opts, :return_to)
-    modal_opts = [id: :modal, return_to: path, component: component, opts: opts]
+
+    modal_opts = [
+      id: :modal,
+      return_to: path,
+      component: component,
+      opts: opts
+    ]
+
     live_component(socket, GrantlandWeb.ModalComponent, modal_opts)
   end
 
   def assign_defaults(session, socket) do
-    socket =
-      assign_new(socket, :current_user, fn ->
-        find_current_user(session)
-      end)
+    assign_new(socket, :current_user, fn ->
+      find_current_user(session)
+    end)
+  end
 
-    case socket.assigns.current_user do
-      %User{} ->
-        socket
+  def can_edit(resource, user) when not is_nil(user) do
+    user.role == :admin || user.id == resource.user_id
+  end
 
-      _other ->
-        socket
-        |> put_flash(:error, "You must log in to access this page.")
-        |> redirect(to: Routes.user_session_path(socket, :new))
-    end
+  def can_edit(_resource, _user) do
+    false
   end
 
   defp find_current_user(session) do

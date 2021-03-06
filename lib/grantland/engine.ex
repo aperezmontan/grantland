@@ -210,7 +210,7 @@ defmodule Grantland.Engine do
   end
 
   def subscribe do
-    Phoenix.PubSub.subscribe(Grantland.PubSub, "entries")
+    Phoenix.PubSub.subscribe(Grantland.PubSub, "engine")
   end
 
   defp broadcast({:error, _reason} = error, _event) do
@@ -218,7 +218,7 @@ defmodule Grantland.Engine do
   end
 
   defp broadcast({:ok, entry}, event) do
-    Phoenix.PubSub.broadcast(Grantland.PubSub, "entries", {event, entry})
+    Phoenix.PubSub.broadcast(Grantland.PubSub, "engine", {event, entry})
     {:ok, entry}
   end
 end

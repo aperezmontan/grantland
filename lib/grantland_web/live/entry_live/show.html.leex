@@ -6,6 +6,7 @@
     title: @page_title,
     action: @live_action,
     entry: @entry,
+    current_user: @current_user,
     return_to: Routes.entry_show_path(@socket, :show, @entry) %>
 <% end %>
 
@@ -23,5 +24,7 @@
 
 </ul>
 
-<span><%= live_patch "Edit", to: Routes.entry_show_path(@socket, :edit, @entry), class: "button" %></span>
+<%= if can_edit(@entry, @current_user) do %>
+  <span><%= live_patch "Edit", to: Routes.entry_show_path(@socket, :edit, @entry), class: "button" %></span>
+<% end %>
 <span><%= live_redirect "Back", to: Routes.entry_index_path(@socket, :index) %></span>

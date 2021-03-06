@@ -5,7 +5,8 @@ defmodule GrantlandWeb.PoolLive.Index do
   alias Grantland.Engine.Pool
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
+    socket = assign_defaults(session, socket)
     {:ok, assign(socket, :pools, list_pools())}
   end
 

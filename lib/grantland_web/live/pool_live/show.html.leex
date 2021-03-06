@@ -6,6 +6,7 @@
     title: @page_title,
     action: @live_action,
     pool: @pool,
+    current_user: @current_user,
     return_to: Routes.pool_show_path(@socket, :show, @pool) %>
 <% end %>
 
@@ -18,7 +19,7 @@
 
 </ul>
 
-<%= if @current_user do %>
+<%= if can_edit(@pool, @current_user) do %>
   <span><%= live_patch "Edit", to: Routes.pool_show_path(@socket, :edit, @pool), class: "button" %></span>
 <% end %>
 <span><%= live_redirect "Back", to: Routes.pool_index_path(@socket, :index) %></span>
