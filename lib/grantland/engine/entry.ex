@@ -2,13 +2,12 @@ defmodule Grantland.Engine.Entry do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Grantland.Engine.Pool
-
   schema "entries" do
     field :name, :string
     field :round, :integer, default: 1
 
-    belongs_to :pool, Pool
+    belongs_to :pool, Grantland.Engine.Pool
+    belongs_to :user, Grantland.Identity.User
 
     timestamps()
   end
@@ -16,8 +15,8 @@ defmodule Grantland.Engine.Entry do
   @doc false
   def changeset(entry, attrs) do
     entry
-    |> cast(attrs, [:name, :pool_id, :round])
-    |> validate_required([:name, :pool_id])
+    |> cast(attrs, [:name, :pool_id, :user_id, :round])
+    |> validate_required([:name, :pool_id, :user_id])
     |> unique_constraint([:name, :pool_id])
   end
 end

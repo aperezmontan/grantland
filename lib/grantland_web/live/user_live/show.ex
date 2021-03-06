@@ -1,7 +1,7 @@
 defmodule GrantlandWeb.UserLive.Show do
   use GrantlandWeb, :live_view
 
-  alias Grantland.Accounts
+  alias Grantland.Identity
 
   @impl true
   def mount(_params, _session, socket) do
@@ -13,7 +13,7 @@ defmodule GrantlandWeb.UserLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:user, Accounts.get_user!(id))}
+     |> assign(:user, Identity.get_user!(id))}
   end
 
   defp page_title(:show), do: "Show User"

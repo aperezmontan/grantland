@@ -5,8 +5,9 @@ defmodule GrantlandWeb.EntryLive.Index do
   alias Grantland.Engine.Entry
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     if connected?(socket), do: Engine.subscribe()
+    socket = assign_defaults(session, socket)
     {:ok, assign(socket, :entries, list_entries()), temporary_assigns: [entries: []]}
   end
 

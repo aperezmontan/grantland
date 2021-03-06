@@ -35,6 +35,9 @@ defmodule GrantlandWeb.EntryLive.FormComponent do
   end
 
   defp save_entry(socket, :edit, entry_params) do
+    current_user = socket.assigns.current_user
+    entry_params = Map.put(entry_params, "user_id", current_user.id)
+
     case Engine.update_entry(socket.assigns.entry, entry_params) do
       {:ok, _entry} ->
         {:noreply,
@@ -48,6 +51,9 @@ defmodule GrantlandWeb.EntryLive.FormComponent do
   end
 
   defp save_entry(socket, :new, entry_params) do
+    current_user = socket.assigns.current_user
+    entry_params = Map.put(entry_params, "user_id", current_user.id)
+
     case Engine.create_entry(entry_params) do
       {:ok, _entry} ->
         {:noreply,

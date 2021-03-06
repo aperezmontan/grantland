@@ -6,6 +6,7 @@
     title: @page_title,
     action: @live_action,
     entry: @entry,
+    current_user: @current_user,
     return_to: Routes.entry_index_path(@socket, :index) %>
 <% end %>
 
@@ -30,12 +31,18 @@
 
         <td>
           <span><%= live_redirect "Show", to: Routes.entry_show_path(@socket, :show, entry) %></span>
+
+        <%= if can_edit(entry, @current_user) do %>
           <span><%= live_patch "Edit", to: Routes.entry_index_path(@socket, :edit, entry) %></span>
           <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: entry.id, data: [confirm: "Are you sure?"] %></span>
+        <% end %>
+
         </td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<span><%= live_patch "New Entry", to: Routes.entry_index_path(@socket, :new) %></span>
+<%= if @current_user do %>
+  <span><%= live_patch "New Entry", to: Routes.entry_index_path(@socket, :new) %></span>
+<% end  %>

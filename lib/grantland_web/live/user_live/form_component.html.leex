@@ -10,8 +10,16 @@
   <%= text_input f, :name %>
   <%= error_tag f, :name %>
 
+  <%= label f, :email %>
+  <%= email_input f, :email, required: true %>
+  <%= error_tag f, :email %>
+
+  <%= label f, :password %>
+  <%= password_input f, :password, required: true %>
+  <%= error_tag f, :password %>
+
   <%= label f, :role %>
-  <%= select f, :role_id, Enum.map(@roles, &{&1.name, &1.id}) %>
+  <%= select f, :role, @roles %>
   <%= error_tag f, :role %>
 
   <div>

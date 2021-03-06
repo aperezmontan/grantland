@@ -26,7 +26,7 @@
         <% end %>
       >
         <td><%= user.name %></td>
-        <td><%= user.role.name %></td>
+        <td><%= user.role %></td>
 
         <td>
           <span><%= live_redirect "Show", to: Routes.user_show_path(@socket, :show, user) %></span>

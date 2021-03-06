@@ -28,6 +28,9 @@ defmodule GrantlandWeb.PoolLive.FormComponent do
   end
 
   defp save_pool(socket, :edit, pool_params) do
+    current_user = socket.assigns.current_user
+    pool_params = Map.put(pool_params, "user_id", current_user.id)
+
     case Engine.update_pool(socket.assigns.pool, pool_params) do
       {:ok, _pool} ->
         {:noreply,
@@ -41,6 +44,9 @@ defmodule GrantlandWeb.PoolLive.FormComponent do
   end
 
   defp save_pool(socket, :new, pool_params) do
+    current_user = socket.assigns.current_user
+    pool_params = Map.put(pool_params, "user_id", current_user.id)
+
     case Engine.create_pool(pool_params) do
       {:ok, _pool} ->
         {:noreply,

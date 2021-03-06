@@ -3,14 +3,14 @@ defmodule GrantlandWeb.UserLiveTest do
 
   import Phoenix.LiveViewTest
 
-  alias Grantland.Accounts
+  alias Grantland.Identity
 
   @create_attrs %{name: "some name"}
   @update_attrs %{name: "some updated name"}
   @invalid_attrs %{name: nil}
 
   defp fixture(:user) do
-    {:ok, user} = Accounts.create_user(@create_attrs)
+    {:ok, user} = Identity.create_user(@create_attrs)
     user
   end
 

@@ -10,15 +10,29 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-alias Grantland.Accounts
+Grantland.Identity.register_admin(%{
+  email: "admin@company.com",
+  password: "123456789abc",
+  password_confirmation: "123456789abc"
+})
 
-roles = [
-  %{name: "Admin"},
-  %{name: "Moderator"},
-  %{name: "User"},
-  %{name: "Guest"}
-]
+Grantland.Identity.register_user(%{
+  email: "moderator@company.com",
+  password: "123456789abc",
+  password_confirmation: "123456789abc",
+  role: :moderator
+})
 
-Enum.each(roles, fn role ->
-  Accounts.create_role(role)
-end)
+Grantland.Identity.register_user(%{
+  email: "user@company.com",
+  password: "123456789abc",
+  password_confirmation: "123456789abc",
+  role: :user
+})
+
+Grantland.Identity.register_user(%{
+  email: "guest@company.com",
+  password: "123456789abc",
+  password_confirmation: "123456789abc",
+  role: :guest
+})

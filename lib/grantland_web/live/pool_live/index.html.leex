@@ -6,6 +6,7 @@
     title: @page_title,
     action: @live_action,
     pool: @pool,
+    current_user: @current_user,
     return_to: Routes.pool_index_path(@socket, :index) %>
 <% end %>
 
@@ -24,12 +25,18 @@
 
         <td>
           <span><%= live_redirect "Show", to: Routes.pool_show_path(@socket, :show, pool) %></span>
+
+        <%= if can_edit(pool, @current_user) do %>
           <span><%= live_patch "Edit", to: Routes.pool_index_path(@socket, :edit, pool) %></span>
           <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: pool.id, data: [confirm: "Are you sure?"] %></span>
+        <% end %>
+
         </td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<span><%= live_patch "New Pool", to: Routes.pool_index_path(@socket, :new) %></span>
+<%= if @current_user do %>
+  <span><%= live_patch "New Pool", to: Routes.pool_index_path(@socket, :new) %></span>
+<% end %>

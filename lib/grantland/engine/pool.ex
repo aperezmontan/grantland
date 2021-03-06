@@ -4,6 +4,7 @@ defmodule Grantland.Engine.Pool do
 
   schema "pools" do
     field :name, :string
+    belongs_to :user, Grantland.Identity.User
 
     timestamps()
   end
@@ -11,8 +12,8 @@ defmodule Grantland.Engine.Pool do
   @doc false
   def changeset(pool, attrs) do
     pool
-    |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> cast(attrs, [:name, :user_id])
+    |> validate_required([:name, :user_id])
     |> validate_length(:name, min: 3)
     |> unique_constraint(:name)
   end
