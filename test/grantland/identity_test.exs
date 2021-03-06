@@ -1,32 +1,23 @@
 defmodule Grantland.IdentityTest do
   use Grantland.DataCase
 
+  import Grantland.IdentityFixtures
+
   alias Grantland.Identity
+  alias Grantland.Identity.{User, UserToken}
+
+  require IEx
 
   describe "users" do
     alias Grantland.Identity.User
 
-    @valid_attrs %{name: "some name"}
-    @update_attrs %{name: "some updated name"}
+    @valid_attrs %{name: "some name", email: "foo@bar.com", password: "12345678"}
+    @update_attrs %{name: "some updated name", password: "12345678"}
     @invalid_attrs %{name: nil}
-
-    def user_fixture(attrs \\ %{}) do
-      {:ok, user} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Identity.create_user()
-
-      user
-    end
 
     test "list_users/0 returns all users" do
       user = user_fixture()
       assert Identity.list_users() == [user]
-    end
-
-    test "get_user!/1 returns the user with given id" do
-      user = user_fixture()
-      assert Identity.get_user!(user.id) == user
     end
 
     test "create_user/1 with valid data creates a user" do
@@ -61,9 +52,6 @@ defmodule Grantland.IdentityTest do
       assert %Ecto.Changeset{} = Identity.change_user(user)
     end
   end
-
-  import Grantland.IdentityFixtures
-  alias Grantland.Identity.{User, UserToken}
 
   describe "get_user_by_email/1" do
     test "does not return the user if the email does not exist" do
@@ -118,11 +106,11 @@ defmodule Grantland.IdentityTest do
     end
 
     test "validates email and password when given" do
-      {:error, changeset} = Identity.register_user(%{email: "not valid", password: "not valid"})
+      {:error, changeset} = Identity.register_user(%{email: "not valid", password: "invalid"})
 
       assert %{
                email: ["must have the @ sign and no spaces"],
-               password: ["should be at least 12 character(s)"]
+               password: ["should be at least 8 character(s)"]
              } = errors_on(changeset)
     end
 
@@ -150,13 +138,26 @@ defmodule Grantland.IdentityTest do
       assert is_binary(user.hashed_password)
       assert is_nil(user.confirmed_at)
       assert is_nil(user.password)
+      assert user.role == :guest
+    end
+  end
+
+  describe "register_admin/1" do
+    test "registers users with a hashed password and sets role to :admin" do
+      email = unique_user_email()
+      {:ok, user} = Identity.register_admin(%{email: email, password: valid_user_password()})
+      assert user.email == email
+      assert is_binary(user.hashed_password)
+      assert is_nil(user.confirmed_at)
+      assert is_nil(user.password)
+      assert user.role == :admin
     end
   end
 
   describe "change_user_registration/2" do
     test "returns a changeset" do
       assert %Ecto.Changeset{} = changeset = Identity.change_user_registration(%User{})
-      assert changeset.required == [:password, :email]
+      assert changeset.required == [:password, :email, :role]
     end
 
     test "allows fields to be set" do
@@ -318,12 +319,12 @@ defmodule Grantland.IdentityTest do
     test "validates password", %{user: user} do
       {:error, changeset} =
         Identity.update_user_password(user, valid_user_password(), %{
-          password: "not valid",
+          password: "invalid",
           password_confirmation: "another"
         })
 
       assert %{
-               password: ["should be at least 12 character(s)"],
+               password: ["should be at least 8 character(s)"],
                password_confirmation: ["does not match password"]
              } = errors_on(changeset)
     end
@@ -527,12 +528,12 @@ defmodule Grantland.IdentityTest do
     test "validates password", %{user: user} do
       {:error, changeset} =
         Identity.reset_user_password(user, %{
-          password: "not valid",
+          password: "invalid",
           password_confirmation: "another"
         })
 
       assert %{
-               password: ["should be at least 12 character(s)"],
+               password: ["should be at least 8 character(s)"],
                password_confirmation: ["does not match password"]
              } = errors_on(changeset)
     end

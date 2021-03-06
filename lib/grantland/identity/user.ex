@@ -23,6 +23,20 @@ defmodule Grantland.Identity.User do
   end
 
   @doc """
+  A user changeset for registering admins.
+  """
+  def admin_registration_changeset(user, attrs) do
+    user
+    |> registration_changeset(attrs)
+    |> prepare_changes(&set_admin_role/1)
+  end
+
+  defp set_admin_role(changeset) do
+    changeset
+    |> put_change(:role, :admin)
+  end
+
+  @doc """
   A user changeset for registration.
 
   It is important to validate the length of both email and password.
@@ -41,7 +55,7 @@ defmodule Grantland.Identity.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password, :role])
+    |> cast(attrs, [:name, :email, :password, :role])
     |> validate_required([:role])
     |> validate_email()
     |> validate_password(opts)

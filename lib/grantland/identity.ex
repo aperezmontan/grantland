@@ -23,22 +23,6 @@ defmodule Grantland.Identity do
   end
 
   @doc """
-  Gets a single user.
-
-  Raises `Ecto.NoResultsError` if the User does not exist.
-
-  ## Examples
-
-      iex> get_user!(123)
-      %User{}
-
-      iex> get_user!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_user!(id), do: Repo.get!(User, id)
-
-  @doc """
   Creates a user.
 
   ## Examples
@@ -50,6 +34,7 @@ defmodule Grantland.Identity do
       {:error, %Ecto.Changeset{}}
 
   """
+  # NOTE: This might not be needed anymore since we use register_user() from phx_gen_auth
   def create_user(attrs \\ %{}) do
     case %User{}
          |> User.registration_changeset(attrs)
@@ -71,6 +56,7 @@ defmodule Grantland.Identity do
       {:error, %Ecto.Changeset{}}
 
   """
+  # NOTE: This might not be used anymore
   def update_user(%User{} = user, attrs) do
     case user
          |> User.registration_changeset(attrs)
@@ -106,6 +92,7 @@ defmodule Grantland.Identity do
       %Ecto.Changeset{data: %User{}}
 
   """
+  # NOTE: This might not be used anymore
   def change_user(%User{} = user, attrs \\ %{}) do
     User.registration_changeset(user, attrs)
   end
@@ -445,6 +432,23 @@ defmodule Grantland.Identity do
   end
 
   @doc """
+  Registers an admin.
+
+  ## Examples
+      iex> register_admin(%{field: value})
+      {:ok, %User{}}
+
+      iex> register_admin(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+  """
+
+  def register_admin(attrs) do
+    %User{}
+    |> User.admin_registration_changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
   Resets the user password.
 
   ## Examples
@@ -467,14 +471,14 @@ defmodule Grantland.Identity do
     end
   end
 
-  def live_view do
-    quote do
-      use Phoenix.LiveView,
-        layout: {RealEstateWeb.LayoutView, "live.html"}
+  # def live_view do
+  #   quote do
+  #     use Phoenix.LiveView,
+  #       layout: {RealEstateWeb.LayoutView, "live.html"}
 
-      unquote(view_helpers())
-      # Add this line
-      import RealEstateWeb.LiveHelpers
-    end
-  end
+  #     unquote(view_helpers())
+  #     # Add this line
+  #     import RealEstateWeb.LiveHelpers
+  #   end
+  # end
 end
