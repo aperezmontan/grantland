@@ -4,7 +4,6 @@ defmodule Grantland.Engine.Entry do
 
   schema "entries" do
     field :name, :string
-    field :round, :integer, default: 1
 
     belongs_to :pool, Grantland.Engine.Pool
     belongs_to :user, Grantland.Identity.User
@@ -15,7 +14,7 @@ defmodule Grantland.Engine.Entry do
   @doc false
   def changeset(entry, attrs) do
     entry
-    |> cast(attrs, [:name, :pool_id, :user_id, :round])
+    |> cast(attrs, [:name, :pool_id, :user_id])
     |> validate_required([:name, :pool_id, :user_id])
     |> unique_constraint([:name, :pool_id])
   end
