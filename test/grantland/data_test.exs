@@ -1,41 +1,34 @@
 defmodule Grantland.DataTest do
   use Grantland.DataCase
 
+  import Grantland.DataFixtures
+
   alias Grantland.Data
+  alias Grantland.Data.Game
 
   describe "games" do
-    alias Grantland.Data.Game
-
     @valid_attrs %{
       away_score: 42,
-      away_team: "some away_team",
+      away_team: 0,
       home_score: 42,
-      home_team: "some home_team",
+      home_team: 1,
       status: :scheduled
     }
+
     @update_attrs %{
       away_score: 43,
-      away_team: "some updated away_team",
+      away_team: 2,
       home_score: 43,
-      home_team: "some updated home_team",
+      home_team: 3,
       status: :scheduled
     }
     @invalid_attrs %{
       away_score: nil,
-      away_team: nil,
+      away_team: 1,
       home_score: nil,
-      home_team: nil,
+      home_team: 1,
       status: nil
     }
-
-    def game_fixture(attrs \\ %{}) do
-      {:ok, game} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Data.create_game()
-
-      game
-    end
 
     test "list_games/0 returns all games" do
       game = game_fixture()
@@ -48,25 +41,33 @@ defmodule Grantland.DataTest do
     end
 
     test "create_game/1 with valid data creates a game" do
-      assert {:ok, %Game{} = game} = Data.create_game(@valid_attrs)
+      {:ok, datetime} = DateTime.now("Etc/UTC")
+
+      assert {:ok, %Game{} = game} =
+               @valid_attrs |> Enum.into(%{time: datetime}) |> Data.create_game()
+
       assert game.away_score == 42
-      assert game.away_team == "some away_team"
+      assert game.away_team == 0
       assert game.home_score == 42
-      assert game.home_team == "some home_team"
+      assert game.home_team == 1
       assert game.status == :scheduled
+      assert DateTime.compare(game.time, datetime |> DateTime.truncate(:second)) == :eq
     end
 
     test "create_game/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Data.create_game(@invalid_attrs)
+      {:ok, datetime} = DateTime.now("Etc/UTC")
+
+      assert {:error, %Ecto.Changeset{}} =
+               @invalid_attrs |> Enum.into(%{time: datetime}) |> Data.create_game()
     end
 
     test "update_game/2 with valid data updates the game" do
       game = game_fixture()
       assert {:ok, %Game{} = game} = Data.update_game(game, @update_attrs)
       assert game.away_score == 43
-      assert game.away_team == "some updated away_team"
+      assert game.away_team == 2
       assert game.home_score == 43
-      assert game.home_team == "some updated home_team"
+      assert game.home_team == 3
       assert game.status == :scheduled
     end
 
