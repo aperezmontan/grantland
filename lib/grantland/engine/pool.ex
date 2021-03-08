@@ -4,6 +4,8 @@ defmodule Grantland.Engine.Pool do
 
   schema "pools" do
     field :name, :string
+    field :ruleset, Grantland.Engine.EctoRuleset, default: Grantland.Engine.Ruleset.new()
+
     belongs_to :user, Grantland.Identity.User
 
     timestamps()
@@ -12,8 +14,8 @@ defmodule Grantland.Engine.Pool do
   @doc false
   def changeset(pool, attrs) do
     pool
-    |> cast(attrs, [:name, :user_id])
-    |> validate_required([:name, :user_id])
+    |> cast(attrs, [:ruleset, :name, :user_id])
+    |> validate_required([:ruleset, :name, :user_id])
     |> validate_length(:name, min: 3)
     |> unique_constraint(:name)
   end
