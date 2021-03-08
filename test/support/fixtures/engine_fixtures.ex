@@ -64,4 +64,8 @@ defmodule Grantland.EngineFixtures do
 
     round
   end
+
+  def ruleset_fixture(attrs \\ %{}) do
+    Grantland.Engine.create_ruleset(attrs)
+  end
 end

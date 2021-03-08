@@ -4,7 +4,7 @@ defmodule Grantland.EngineTest do
   import Grantland.{EngineFixtures, IdentityFixtures}
 
   alias Grantland.Engine
-  alias Grantland.Engine.{Entry, Pick, Pool, Round}
+  alias Grantland.Engine.{Entry, Pick, Pool, Round, Ruleset}
 
   describe "entries" do
     @valid_attrs %{name: "some name"}
@@ -220,6 +220,105 @@ defmodule Grantland.EngineTest do
     test "change_round/1 returns a round changeset" do
       round = round_fixture()
       assert %Ecto.Changeset{} = Engine.change_round(round)
+    end
+  end
+
+  describe "rulesets" do
+    @default_attrs %{state: :initialized, pool_type: :suicide, rounds: 0}
+
+    test "new/0 returns a new Ruleset with default data" do
+      assert %Ruleset{} = ruleset = ruleset_fixture()
+      assert ruleset.state == @default_attrs.state
+      assert ruleset.pool_type == @default_attrs.pool_type
+      assert ruleset.rounds == @default_attrs.rounds
+    end
+
+    test "new/1 returns a new Ruleset with entered data" do
+      assert %Ruleset{} = ruleset = ruleset_fixture(%{state: :completed})
+      assert ruleset.state == :completed
+      assert ruleset.pool_type == @default_attrs.pool_type
+      assert ruleset.rounds == @default_attrs.rounds
+    end
+
+    test "check_pool_ruleset/2 when trying to update the pool's state to :in_progress, when the pool is :initialized, it returns the Pool with state set to :in_progress" do
+      pool = pool_fixture()
+      assert pool.ruleset.state == :initialized
+
+      assert {:ok, %Pool{ruleset: %Ruleset{state: :in_progress}}} =
+               Engine.check_pool_ruleset(pool, :start_pool)
+    end
+
+    test "check_pool_ruleset/2 when trying to update the pool's state to :completed, when the pool is :initialized, it returns the Pool with state set to :in_progress" do
+      pool = pool_fixture()
+      assert pool.ruleset.state == :initialized
+
+      assert {:ok, %Pool{ruleset: %Ruleset{state: :completed}}} =
+               Engine.check_pool_ruleset(pool, :complete_pool)
+    end
+
+    test "check_pool_ruleset/2 when trying to update the pool's state to :completed, when the pool is :initialized, it returns the Pool with state set to :completed" do
+      pool = pool_fixture()
+      assert pool.ruleset.state == :initialized
+
+      assert {:ok, %Pool{ruleset: %Ruleset{state: :completed}}} =
+               Engine.check_pool_ruleset(pool, :complete_pool)
+    end
+
+    test "check_pool_ruleset/2 when trying to update the pool's state to :in_progress, when the pool is :in_progress, it returns the Pool with state set to :in_progress" do
+      ruleset = ruleset_fixture(%{state: :in_progress})
+      pool = pool_fixture(%{ruleset: ruleset})
+      assert pool.ruleset.state == :in_progress
+
+      assert {:ok, %Pool{ruleset: %Ruleset{state: :in_progress}}} =
+               Engine.check_pool_ruleset(pool, :start_pool)
+    end
+
+    test "check_pool_ruleset/2 when trying to update the pool's state to :completed, when the pool is :in_progress, it returns the Pool with state set to :in_progress" do
+      ruleset = ruleset_fixture(%{state: :in_progress})
+      pool = pool_fixture(%{ruleset: ruleset})
+      assert pool.ruleset.state == :in_progress
+
+      assert {:ok, %Pool{ruleset: %Ruleset{state: :completed}}} =
+               Engine.check_pool_ruleset(pool, :complete_pool)
+    end
+
+    test "check_pool_ruleset/2 when trying to update the pool's state to :completed, when the pool is :in_progress, it returns the Pool with state set to :completed" do
+      ruleset = ruleset_fixture(%{state: :in_progress})
+      pool = pool_fixture(%{ruleset: ruleset})
+      assert pool.ruleset.state == :in_progress
+
+      assert {:ok, %Pool{ruleset: %Ruleset{state: :completed}}} =
+               Engine.check_pool_ruleset(pool, :complete_pool)
+    end
+
+    test "check_pool_ruleset/2 when trying to update the pool's state to :completed, when the pool is :initialized or :in_progress, it always returns completed" do
+      initialized_ruleset = ruleset_fixture()
+      in_progress_ruleset = ruleset_fixture(%{state: :in_progress})
+      initialized_pool = pool_fixture(%{ruleset: initialized_ruleset})
+      in_progress_pool = pool_fixture(%{ruleset: in_progress_ruleset})
+
+      assert initialized_pool.ruleset.state == :initialized
+      assert in_progress_pool.ruleset.state == :in_progress
+
+      assert {:ok, %Pool{ruleset: %Ruleset{state: :completed}}} =
+               Engine.check_pool_ruleset(initialized_pool, :complete_pool)
+
+      assert {:ok, %Pool{ruleset: %Ruleset{state: :completed}}} =
+               Engine.check_pool_ruleset(in_progress_pool, :complete_pool)
+    end
+
+    test "check_pool_ruleset/2 when trying to update the pool's state when it's completed returns an error" do
+      ruleset = ruleset_fixture(%{state: :completed})
+      pool = pool_fixture(%{ruleset: ruleset})
+
+      assert {:error, "Pool cannot be updated. It's complete."} =
+               Engine.check_pool_ruleset(pool, :start_pool)
+    end
+
+    test "check_pool_ruleset/2 when trying to update a Ruleset with an invalid action returns an error" do
+      pool = pool_fixture()
+
+      assert {:error, :invalid_action} = Engine.check_pool_ruleset(pool, :foo)
     end
   end
 end

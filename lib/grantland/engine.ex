@@ -6,7 +6,7 @@ defmodule Grantland.Engine do
   import Ecto.Query, warn: false
   alias Grantland.Repo
 
-  alias Grantland.Engine.{Entry, Pick, Pool, Round}
+  alias Grantland.Engine.{Entry, Pick, Pool, Round, Ruleset}
 
   @doc """
   Returns the list of entries.
@@ -313,6 +313,49 @@ defmodule Grantland.Engine do
   """
   def change_pool(%Pool{} = pool, attrs \\ %{}) do
     Pool.changeset(pool, attrs)
+  end
+
+  # TODO: look into potentially moving this function to the Pool or Ruleset as validations
+  @doc """
+  Check's a pool's ruleset.
+
+  ## Examples
+
+      iex> check_pool_ruleset(pool, :action)
+      {:ok, %Pool{}}
+
+      iex> check_pool_ruleset(pool, :bad_action)
+      {:error, :invalid_action}
+
+  """
+  def check_pool_ruleset(%Pool{} = pool, action) do
+    case Enum.member?(Ruleset.valid_actions(), action) do
+      true -> check_ruleset_and_update(pool, action)
+      false -> {:error, :invalid_action}
+    end
+  end
+
+  defp check_ruleset_and_update(%Pool{ruleset: ruleset} = pool, action) do
+    case Ruleset.check(ruleset, action) do
+      {:ok, ruleset} -> update_pool(pool, %{ruleset: ruleset})
+      {:error, error} -> {:error, error}
+    end
+  end
+
+  @doc """
+  Create's a standalone Ruleset.
+
+  ## Examples
+
+      iex> create_ruleset(pool, resource, :action)
+      {:ok, %Pool{}}
+
+      iex> create_ruleset(pool, resource, :bad_action)
+      {:error, :invalid_action}
+
+  """
+  def create_ruleset(attrs \\ %{}) do
+    Ruleset.new(attrs)
   end
 
   @doc """
