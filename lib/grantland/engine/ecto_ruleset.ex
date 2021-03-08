@@ -17,7 +17,7 @@ defmodule Grantland.Engine.EctoRuleset do
   def load(data) when is_map(data) do
     data =
       for {key, val} <- data do
-        # TODO: Want to return atom values. Clean this up.
+        # TODO: This is how we return atom values. Clean this up.
         val =
           case key == "pool_type" || key == "state" do
             true -> String.to_existing_atom(val)
