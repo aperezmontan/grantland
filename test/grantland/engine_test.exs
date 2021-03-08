@@ -1,7 +1,7 @@
 defmodule Grantland.EngineTest do
   use Grantland.DataCase
 
-  import Grantland.{EngineFixtures, IdentityFixtures}
+  import Grantland.{DataFixtures, EngineFixtures, IdentityFixtures}
 
   alias Grantland.Engine
   alias Grantland.Engine.{Entry, Pick, Pool, Round, Ruleset}
@@ -220,6 +220,18 @@ defmodule Grantland.EngineTest do
     test "change_round/1 returns a round changeset" do
       round = round_fixture()
       assert %Ecto.Changeset{} = Engine.change_round(round)
+    end
+
+    test "upsert_round_games/2 associates a round with games" do
+      first_game = game_fixture()
+      second_game = game_fixture()
+      round = round_fixture() |> Grantland.Repo.preload(:games)
+
+      assert round.games == []
+      game_ids = Enum.map(Grantland.Data.list_games(), fn game -> game.id end)
+      assert %Round{games: games} = Engine.upsert_round_games(round, game_ids)
+
+      assert games == [first_game, second_game]
     end
   end
 

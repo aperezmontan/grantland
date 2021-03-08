@@ -452,6 +452,24 @@ defmodule Grantland.Engine do
     Round.changeset(round, attrs)
   end
 
+  def upsert_round_games(round, game_ids) when is_list(game_ids) do
+    games =
+      Grantland.Data.Game
+      |> where([game], game.id in ^game_ids)
+      |> Repo.all()
+
+    with {:ok, _struct} <-
+           round
+           |> Repo.preload(:games)
+           |> Round.changeset_update_games(games)
+           |> Repo.update!() do
+      {:ok, get_round!(round.id)}
+    else
+      error ->
+        error
+    end
+  end
+
   def subscribe do
     Phoenix.PubSub.subscribe(Grantland.PubSub, "engine")
   end

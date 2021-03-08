@@ -20,7 +20,9 @@ defmodule Grantland.Data.Game do
 
     field :time, :utc_datetime
 
-    many_to_many :rounds, Grantland.Engine.Round, join_through: "games_rounds"
+    many_to_many :rounds, Grantland.Engine.Round,
+      join_through: "games_rounds",
+      on_replace: :delete
 
     timestamps()
   end
