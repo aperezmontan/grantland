@@ -18,8 +18,11 @@
   </li>
 
   <li>
-    <strong>Round:</strong>
-    <%= @entry.round %>
+    <strong>Picks:</strong>
+    <%= for pick <- @entry.picks do %>
+      <%= pick.entry_id %>
+      <%= pick.round_id %>
+    <% end %>
   </li>
 
 </ul>

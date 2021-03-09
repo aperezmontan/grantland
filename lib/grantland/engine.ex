@@ -41,7 +41,7 @@ defmodule Grantland.Engine do
 
   """
   # TODO: Get rid of these preloads if possible
-  def get_entry!(id), do: Repo.get!(Entry, id) |> Repo.preload(:pool)
+  def get_entry!(id), do: Repo.get!(Entry, id) |> Repo.preload([:pool, :picks])
 
   @doc """
   Creates a entry.

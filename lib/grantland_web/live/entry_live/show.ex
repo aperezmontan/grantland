@@ -6,6 +6,7 @@ defmodule GrantlandWeb.EntryLive.Show do
   @impl true
   def mount(_params, session, socket) do
     socket = assign_defaults(session, socket)
+    IO.inspect(socket, label: "THE SOCKET")
     {:ok, socket}
   end
 
