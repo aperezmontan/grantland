@@ -3,7 +3,7 @@ defmodule Grantland.Engine.Round do
   import Ecto.Changeset
 
   schema "rounds" do
-    field :number, :integer, default: 0
+    field :number, :integer, default: 1
     field :name, :string
 
     belongs_to :pool, Grantland.Engine.Pool

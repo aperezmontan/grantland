@@ -235,6 +235,32 @@ defmodule Grantland.Engine do
   end
 
   @doc """
+  Returns the list of pool states.
+
+  ## Examples
+
+      iex> list_pool_states()
+      [:initialized, ...]
+
+  """
+  def list_pool_states do
+    Ruleset.valid_pool_states()
+  end
+
+  @doc """
+  Returns the list of pool types.
+
+  ## Examples
+
+      iex> list_pool_types()
+      [:box, ...]
+
+  """
+  def list_pool_types do
+    Ruleset.valid_pool_types()
+  end
+
+  @doc """
   Gets a single pool.
 
   Raises `Ecto.NoResultsError` if the Pool does not exist.
@@ -313,49 +339,6 @@ defmodule Grantland.Engine do
   """
   def change_pool(%Pool{} = pool, attrs \\ %{}) do
     Pool.changeset(pool, attrs)
-  end
-
-  # TODO: look into potentially moving this function to the Pool or Ruleset as validations
-  @doc """
-  Check's a pool's ruleset.
-
-  ## Examples
-
-      iex> check_pool_ruleset(pool, :action)
-      {:ok, %Pool{}}
-
-      iex> check_pool_ruleset(pool, :bad_action)
-      {:error, :invalid_action}
-
-  """
-  def check_pool_ruleset(%Pool{} = pool, action) do
-    case Enum.member?(Ruleset.valid_actions(), action) do
-      true -> check_ruleset_and_update(pool, action)
-      false -> {:error, :invalid_action}
-    end
-  end
-
-  defp check_ruleset_and_update(%Pool{ruleset: ruleset} = pool, action) do
-    case Ruleset.check(ruleset, action) do
-      {:ok, ruleset} -> update_pool(pool, %{ruleset: ruleset})
-      {:error, error} -> {:error, error}
-    end
-  end
-
-  @doc """
-  Create's a standalone Ruleset.
-
-  ## Examples
-
-      iex> create_ruleset(pool, resource, :action)
-      {:ok, %Pool{}}
-
-      iex> create_ruleset(pool, resource, :bad_action)
-      {:error, :invalid_action}
-
-  """
-  def create_ruleset(attrs \\ %{}) do
-    Ruleset.new(attrs)
   end
 
   @doc """
@@ -469,6 +452,70 @@ defmodule Grantland.Engine do
         error
     end
   end
+
+  # TODO: look into potentially moving this function to the Pool or Ruleset as validations
+  @doc """
+  Check's a pool's ruleset.
+
+  ## Examples
+
+      iex> check_pool_ruleset(pool, :action)
+      {:ok, %Pool{}}
+
+      iex> check_pool_ruleset(pool, :bad_action)
+      {:error, :invalid_action}
+
+  """
+  def check_pool_ruleset(%Pool{} = pool, action) do
+    case Enum.member?(Ruleset.valid_actions(), action) do
+      true -> check_ruleset_and_update(pool, action)
+      false -> {:error, :invalid_action}
+    end
+  end
+
+  defp check_ruleset_and_update(%Pool{ruleset: ruleset} = pool, action) do
+    case check(ruleset, action) do
+      {:ok, ruleset} -> update_pool(pool, %{ruleset: ruleset})
+      {:error, error} -> {:error, error}
+    end
+  end
+
+  @doc """
+  Create's a standalone Ruleset.
+
+  ## Examples
+
+      iex> create_ruleset(pool, resource, :action)
+      {:ok, %Pool{}}
+
+      iex> create_ruleset(pool, resource, :bad_action)
+      {:error, :invalid_action}
+
+  """
+  def create_ruleset(attrs \\ %{}) do
+    Ruleset.new(attrs)
+  end
+
+  def check(%Pool.Grantland.Engine.Ruleset{state: :initialized} = ruleset, :start_pool) do
+    {:ok, %Pool.Grantland.Engine.Ruleset{ruleset | state: :in_progress}}
+  end
+
+  def check(%Pool.Grantland.Engine.Ruleset{state: :in_progress} = ruleset, :start_pool) do
+    {:ok, ruleset}
+  end
+
+  def check(%Pool.Grantland.Engine.Ruleset{} = ruleset, :complete_pool) do
+    {:ok, %Pool.Grantland.Engine.Ruleset{ruleset | state: :completed}}
+  end
+
+  def check(%Pool.Grantland.Engine.Ruleset{state: :initialized} = ruleset, :add_entry),
+    do: {:ok, ruleset}
+
+  def check(%Pool.Grantland.Engine.Ruleset{state: :in_progress}, :add_entry),
+    do: {:error, "Entry cannot be added. Pool's already started."}
+
+  def check(%Pool.Grantland.Engine.Ruleset{state: :completed}, _action),
+    do: {:error, "Pool cannot be updated. It's complete."}
 
   def subscribe do
     Phoenix.PubSub.subscribe(Grantland.PubSub, "engine")

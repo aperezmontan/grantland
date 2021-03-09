@@ -4,6 +4,13 @@ defmodule GrantlandWeb.PoolLive.FormComponent do
   alias Grantland.Engine
 
   @impl true
+  def mount(socket) do
+    pool_types = Engine.list_pool_types()
+    socket = assign(socket, pool_types: pool_types)
+    {:ok, socket}
+  end
+
+  @impl true
   def update(%{pool: pool} = assigns, socket) do
     changeset = Engine.change_pool(pool)
 

@@ -2,9 +2,22 @@ defmodule Grantland.Engine.Pool do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Grantland.Engine.Ruleset
+
   schema "pools" do
     field :name, :string
-    field :ruleset, Grantland.Engine.EctoRuleset, default: Grantland.Engine.Ruleset.new()
+
+    embeds_one :ruleset, Ruleset, on_replace: :update do
+      field :state, Ecto.Enum,
+        values: Ruleset.valid_pool_states(),
+        default: :initialized
+
+      field :pool_type, Ecto.Enum,
+        values: Ruleset.valid_pool_types(),
+        default: :knockout
+
+      field :rounds, :integer, min: 1, default: 1
+    end
 
     belongs_to :user, Grantland.Identity.User
 
@@ -14,9 +27,23 @@ defmodule Grantland.Engine.Pool do
   @doc false
   def changeset(pool, attrs) do
     pool
-    |> cast(attrs, [:ruleset, :name, :user_id])
+    |> cast(attrs, [:name, :user_id])
+    |> cast_embed(:ruleset, with: &ruleset_changeset/2)
     |> validate_required([:ruleset, :name, :user_id])
     |> validate_length(:name, min: 3)
     |> unique_constraint(:name)
+  end
+
+  @doc false
+  defp ruleset_changeset(schema, params) do
+    params =
+      case is_struct(params) do
+        true -> Map.from_struct(params)
+        false -> params
+      end
+
+    schema
+    |> cast(params, [:state, :pool_type, :rounds])
+    |> validate_required([:state, :pool_type, :rounds])
   end
 end

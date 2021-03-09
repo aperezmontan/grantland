@@ -43,6 +43,12 @@ defmodule Grantland.EngineFixtures do
   def pool_fixture(attrs \\ %{}) do
     %Grantland.Identity.User{id: user_id} = user_fixture()
 
+    attrs =
+      case Map.has_key?(attrs, :ruleset) do
+        true -> attrs
+        false -> attrs |> Enum.into(%{ruleset: ruleset_fixture()})
+      end
+
     {:ok, pool} =
       attrs
       |> Enum.into(%{

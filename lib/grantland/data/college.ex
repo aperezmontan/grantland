@@ -52,6 +52,46 @@ defmodule Grantland.Data.College do
         key: 1,
         name: "North Carolina Tar Heels",
         short_name: "UNC"
+      },
+      2 => %College{
+        key: 2,
+        name: "Ohio State Buckeyes",
+        short_name: "OSU"
+      },
+      3 => %College{
+        key: 3,
+        name: "Michigan State Spartans",
+        short_name: "MSU"
+      },
+      4 => %College{
+        key: 4,
+        name: "Iowa Hawkeyes",
+        short_name: "IOWA"
+      },
+      5 => %College{
+        key: 5,
+        name: "Illinois Fighting Illini",
+        short_name: "ILL"
+      },
+      6 => %College{
+        key: 6,
+        name: "Notre Dame Fighting Irish",
+        short_name: "ND"
+      },
+      7 => %College{
+        key: 7,
+        name: "Miami Hurricanes",
+        short_name: "UMiami"
+      },
+      8 => %College{
+        key: 8,
+        name: "USC Trojans",
+        short_name: "USC"
+      },
+      9 => %College{
+        key: 9,
+        name: "UCLA Bruins",
+        short_name: "UCLA"
       }
     }
   end

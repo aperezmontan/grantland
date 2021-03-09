@@ -5,6 +5,7 @@ defmodule Grantland.EngineTest do
 
   alias Grantland.Engine
   alias Grantland.Engine.{Entry, Pick, Pool, Round, Ruleset}
+  # alias Grantland.Engine.Pool.Grantland.Engine.Ruleset
 
   describe "entries" do
     @valid_attrs %{name: "some name"}
@@ -117,7 +118,7 @@ defmodule Grantland.EngineTest do
   end
 
   describe "pools" do
-    @valid_attrs %{name: "some name"}
+    @valid_attrs %{name: "some name", ruleset: %{}}
     @update_attrs %{name: "some updated name"}
     @invalid_attrs %{name: nil}
 
@@ -236,7 +237,15 @@ defmodule Grantland.EngineTest do
   end
 
   describe "rulesets" do
-    @default_attrs %{state: :initialized, pool_type: :suicide, rounds: 0}
+    @default_attrs %{state: :initialized, pool_type: :knockout, rounds: 0}
+
+    test "list_pool_states/0 returns the list of valid pool_states" do
+      assert [:initialized, :in_progress, :completed] = Engine.list_pool_states()
+    end
+
+    test "list_pool_types/0 returns the list of valid pool_types" do
+      assert [:box, :knockout] = Engine.list_pool_types()
+    end
 
     test "new/0 returns a new Ruleset with default data" do
       assert %Ruleset{} = ruleset = ruleset_fixture()
@@ -256,7 +265,7 @@ defmodule Grantland.EngineTest do
       pool = pool_fixture()
       assert pool.ruleset.state == :initialized
 
-      assert {:ok, %Pool{ruleset: %Ruleset{state: :in_progress}}} =
+      assert {:ok, %Pool{ruleset: %Pool.Grantland.Engine.Ruleset{state: :in_progress}}} =
                Engine.check_pool_ruleset(pool, :start_pool)
     end
 
@@ -264,7 +273,7 @@ defmodule Grantland.EngineTest do
       pool = pool_fixture()
       assert pool.ruleset.state == :initialized
 
-      assert {:ok, %Pool{ruleset: %Ruleset{state: :completed}}} =
+      assert {:ok, %Pool{ruleset: %Pool.Grantland.Engine.Ruleset{state: :completed}}} =
                Engine.check_pool_ruleset(pool, :complete_pool)
     end
 
@@ -272,7 +281,7 @@ defmodule Grantland.EngineTest do
       pool = pool_fixture()
       assert pool.ruleset.state == :initialized
 
-      assert {:ok, %Pool{ruleset: %Ruleset{state: :completed}}} =
+      assert {:ok, %Pool{ruleset: %Pool.Grantland.Engine.Ruleset{state: :completed}}} =
                Engine.check_pool_ruleset(pool, :complete_pool)
     end
 
@@ -281,7 +290,7 @@ defmodule Grantland.EngineTest do
       pool = pool_fixture(%{ruleset: ruleset})
       assert pool.ruleset.state == :in_progress
 
-      assert {:ok, %Pool{ruleset: %Ruleset{state: :in_progress}}} =
+      assert {:ok, %Pool{ruleset: %Pool.Grantland.Engine.Ruleset{state: :in_progress}}} =
                Engine.check_pool_ruleset(pool, :start_pool)
     end
 
@@ -290,7 +299,7 @@ defmodule Grantland.EngineTest do
       pool = pool_fixture(%{ruleset: ruleset})
       assert pool.ruleset.state == :in_progress
 
-      assert {:ok, %Pool{ruleset: %Ruleset{state: :completed}}} =
+      assert {:ok, %Pool{ruleset: %Pool.Grantland.Engine.Ruleset{state: :completed}}} =
                Engine.check_pool_ruleset(pool, :complete_pool)
     end
 
@@ -299,7 +308,7 @@ defmodule Grantland.EngineTest do
       pool = pool_fixture(%{ruleset: ruleset})
       assert pool.ruleset.state == :in_progress
 
-      assert {:ok, %Pool{ruleset: %Ruleset{state: :completed}}} =
+      assert {:ok, %Pool{ruleset: %Pool.Grantland.Engine.Ruleset{state: :completed}}} =
                Engine.check_pool_ruleset(pool, :complete_pool)
     end
 
@@ -312,10 +321,10 @@ defmodule Grantland.EngineTest do
       assert initialized_pool.ruleset.state == :initialized
       assert in_progress_pool.ruleset.state == :in_progress
 
-      assert {:ok, %Pool{ruleset: %Ruleset{state: :completed}}} =
+      assert {:ok, %Pool{ruleset: %Pool.Grantland.Engine.Ruleset{state: :completed}}} =
                Engine.check_pool_ruleset(initialized_pool, :complete_pool)
 
-      assert {:ok, %Pool{ruleset: %Ruleset{state: :completed}}} =
+      assert {:ok, %Pool{ruleset: %Pool.Grantland.Engine.Ruleset{state: :completed}}} =
                Engine.check_pool_ruleset(in_progress_pool, :complete_pool)
     end
 

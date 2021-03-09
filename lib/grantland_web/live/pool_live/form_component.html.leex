@@ -10,5 +10,20 @@
   <%= text_input f, :name %>
   <%= error_tag f, :name %>
 
-  <%= submit "Save", phx_disable_with: "Saving..." %>
+  <%= inputs_for f, :ruleset, fn r -> %>
+    <div class="form-group">
+      <%= label r, :pool_type %>
+      <%# TODO: move this to view helper %>
+      <%= select r, :pool_type, Enum.map(@pool_types, &{String.capitalize(Atom.to_string(&1)), &1}) %>
+      <%= error_tag r, :pool_type %>
+
+      <%= label r, :rounds %>
+      <%= number_input r, :rounds, min: 0 %>
+      <%= error_tag r, :rounds %>
+    </div>
+  <% end %>
+
+  <div>
+    <%= submit "Save", phx_disable_with: "Saving..." %>
+  </div>
 </form>
