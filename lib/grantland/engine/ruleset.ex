@@ -6,7 +6,7 @@ defmodule Grantland.Engine.Ruleset do
 
   defstruct state: :initialized,
             pool_type: :knockout,
-            rounds: 0
+            rounds: 1
 
   def new(attrs \\ %{}), do: struct(Ruleset, attrs)
 

@@ -51,49 +51,48 @@ moderator_user =
   |> Ecto.Query.first()
   |> Grantland.Repo.one()
 
-guest_user =
-  Grantland.Identity.User
-  |> Ecto.Query.where([i], i.role == :guest)
-  |> Ecto.Query.first()
-  |> Grantland.Repo.one()
-
 user_user =
   Grantland.Identity.User
   |> Ecto.Query.where([i], i.role == :user)
   |> Ecto.Query.first()
   |> Grantland.Repo.one()
 
-Grantland.Engine.create_pool(%{
+Grantland.Identity.User
+|> Ecto.Query.where([i], i.role == :guest)
+|> Ecto.Query.first()
+|> Grantland.Repo.one()
+
+Grantland.Engine.activate_pool(%{
   name: "admin_box_pool",
   user_id: admin_user.id,
   ruleset: %Grantland.Engine.Ruleset{pool_type: :box}
 })
 
-Grantland.Engine.create_pool(%{
+Grantland.Engine.activate_pool(%{
   name: "admin_knockout_pool",
   user_id: admin_user.id,
   ruleset: %Grantland.Engine.Ruleset{pool_type: :knockout}
 })
 
-Grantland.Engine.create_pool(%{
+Grantland.Engine.activate_pool(%{
   name: "moderator_box_pool",
   user_id: moderator_user.id,
   ruleset: %Grantland.Engine.Ruleset{pool_type: :box}
 })
 
-Grantland.Engine.create_pool(%{
+Grantland.Engine.activate_pool(%{
   name: "moderator_knockout_pool",
   user_id: moderator_user.id,
   ruleset: %Grantland.Engine.Ruleset{pool_type: :knockout}
 })
 
-Grantland.Engine.create_pool(%{
+Grantland.Engine.activate_pool(%{
   name: "user_box_pool",
   user_id: user_user.id,
   ruleset: %Grantland.Engine.Ruleset{pool_type: :box}
 })
 
-Grantland.Engine.create_pool(%{
+Grantland.Engine.activate_pool(%{
   name: "user_knockout_pool",
   user_id: user_user.id,
   ruleset: %Grantland.Engine.Ruleset{pool_type: :knockout}

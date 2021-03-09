@@ -1,5 +1,6 @@
 defmodule Grantland.EngineTest do
   use Grantland.DataCase
+  require IEx
 
   import Grantland.{DataFixtures, EngineFixtures, IdentityFixtures}
 
@@ -132,18 +133,36 @@ defmodule Grantland.EngineTest do
       assert Engine.get_pool!(pool.id) == pool
     end
 
-    test "create_pool/1 with valid data creates a pool" do
+    test "activate_pool/1 with valid data creates a pool with a round" do
       %Grantland.Identity.User{id: user_id} = user_fixture()
 
       assert {:ok, %Pool{} = pool} =
-               @valid_attrs |> Enum.into(%{user_id: user_id}) |> Engine.create_pool()
+               @valid_attrs |> Enum.into(%{user_id: user_id}) |> Engine.activate_pool()
 
       assert pool.name == "some name"
+      assert Enum.count(pool.rounds) == 1
     end
 
-    test "create_pool/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Engine.create_pool(@invalid_attrs)
+    test "activate_pool/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Engine.activate_pool(@invalid_attrs)
     end
+
+    # NOTE: create_pool/1 is a private function. Users can only activate pools.
+    # These actions are tested in the activate_pool suite.
+
+    # test "create_pool/1 with valid data creates a pool with a round" do
+    #   %Grantland.Identity.User{id: user_id} = user_fixture()
+
+    #   assert {:ok, %Pool{} = pool} =
+    #            @valid_attrs |> Enum.into(%{user_id: user_id}) |> Engine.create_pool()
+
+    #   assert pool.name == "some name"
+    #   assert Enum.count(pool.rounds) == 1
+    # end
+
+    # test "create_pool/1 with invalid data returns error changeset" do
+    #   assert {:error, %Ecto.Changeset{}} = Engine.create_pool(@invalid_attrs)
+    # end
 
     test "update_pool/2 with valid data updates the pool" do
       pool = pool_fixture()
@@ -186,11 +205,10 @@ defmodule Grantland.EngineTest do
 
     test "create_round/1 with valid data creates a round" do
       %Pool{id: pool_id} = pool_fixture()
-      %Grantland.Identity.User{id: user_id} = user_fixture()
 
       assert {:ok, %Round{} = round} =
                @valid_attrs
-               |> Enum.into(%{pool_id: pool_id, user_id: user_id})
+               |> Enum.into(%{pool_id: pool_id})
                |> Engine.create_round()
 
       assert round.name == "some name"
@@ -200,10 +218,38 @@ defmodule Grantland.EngineTest do
       assert {:error, %Ecto.Changeset{}} = Engine.create_round(@invalid_attrs)
     end
 
+    test "create_round/1 with valid data with a Pool that already has an active round returns error changeset" do
+      %Pool{id: pool_id} = pool_fixture()
+
+      assert {:error, %Ecto.Changeset{errors: [active: error]}} =
+               @valid_attrs
+               |> Enum.into(%{pool_id: pool_id, active: true})
+               |> Engine.create_round()
+
+      assert error == {"Pool already has an active round", []}
+    end
+
     test "update_round/2 with valid data updates the round" do
       round = round_fixture()
       assert {:ok, %Round{} = round} = Engine.update_round(round, @update_attrs)
       assert round.name == "some updated name"
+    end
+
+    test "update_round/2 with valid data with a Pool that already has an active round returns error changeset" do
+      %Pool{id: pool_id} = pool_fixture()
+      Engine.get_active_round_in_pool(pool_id) |> Engine.update_round(%{active: false})
+
+      round_fixture(%{pool_id: pool_id, active: true})
+      round = round_fixture(%{pool_id: pool_id})
+
+      valid_attrs =
+        @valid_attrs
+        |> Enum.into(%{pool_id: pool_id, active: true})
+
+      assert {:error, %Ecto.Changeset{errors: [active: error]}} =
+               Engine.update_round(round, valid_attrs)
+
+      assert error == {"Pool already has an active round", []}
     end
 
     test "update_round/2 with invalid data returns error changeset" do
@@ -237,7 +283,7 @@ defmodule Grantland.EngineTest do
   end
 
   describe "rulesets" do
-    @default_attrs %{state: :initialized, pool_type: :knockout, rounds: 0}
+    @default_attrs %{state: :initialized, pool_type: :knockout, rounds: 1}
 
     test "list_pool_states/0 returns the list of valid pool_states" do
       assert [:initialized, :in_progress, :completed] = Engine.list_pool_states()

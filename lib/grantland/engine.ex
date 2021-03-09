@@ -41,7 +41,24 @@ defmodule Grantland.Engine do
 
   """
   # TODO: Get rid of these preloads if possible
-  def get_entry!(id), do: Repo.get!(Entry, id) |> Repo.preload([:pool, :picks])
+  def get_entry!(id), do: Repo.get!(Entry, id) |> Repo.preload([:pool])
+
+  @doc """
+  Gets a single entry with the picks preloaded.
+
+  Raises `Ecto.NoResultsError` if the Entry does not exist.
+
+  ## Examples
+
+      iex> get_entry!(123)
+      %Entry{}
+
+      iex> get_entry!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  # TODO: Get rid of these preloads if possible
+  def get_entry_with_picks!(id), do: Repo.get!(Entry, id) |> Repo.preload([:pool, :picks])
 
   @doc """
   Creates a entry.
@@ -277,7 +294,23 @@ defmodule Grantland.Engine do
   def get_pool!(id), do: Repo.get!(Pool, id)
 
   @doc """
-  Creates a pool.
+  Gets a single pool with its rounds preloaded.
+
+  Raises `Ecto.NoResultsError` if the Pool does not exist.
+
+  ## Examples
+
+      iex> get_pool_with_rounds!(123)
+      %Pool{}
+
+      iex> get_pool_with_rounds!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_pool_with_rounds!(id), do: Repo.get!(Pool, id) |> Repo.preload(:rounds)
+
+  @doc """
+  Creates a pool. This method is private as it should only be used by activate_pool.
 
   ## Examples
 
@@ -288,7 +321,7 @@ defmodule Grantland.Engine do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_pool(attrs \\ %{}) do
+  defp create_pool(attrs \\ %{}) do
     %Pool{}
     |> Pool.changeset(attrs)
     |> Repo.insert()
@@ -342,6 +375,28 @@ defmodule Grantland.Engine do
   end
 
   @doc """
+  Creates the first round of a new pool, activating it.
+
+  ## Examples
+
+      iex> activate_pool(123)
+      {:ok, %Pool{}}
+
+      iex> activate_pool(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+  """
+  def activate_pool(attrs \\ %{}) do
+    case create_pool(attrs) do
+      {:ok, %Pool{id: id}} ->
+        pool = get_pool_with_rounds!(id) |> create_first_active_round_for_pool
+        {:ok, pool}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
+  end
+
+  @doc """
   Returns the list of rounds.
 
   ## Examples
@@ -371,6 +426,23 @@ defmodule Grantland.Engine do
   def get_round!(id), do: Repo.get!(Round, id)
 
   @doc """
+  Gets an active Round in a Pool if one exists.
+
+  Raises `Ecto.NoResultsError` if the Round does not exist.
+
+  ## Examples
+
+      iex> get_active_round_in_pool(123)
+      %Round{}
+
+      iex> get_active_round_in_pool(456)
+      ** nil
+
+  """
+  def get_active_round_in_pool(pool_id),
+    do: from(r in Round, where: [pool_id: ^pool_id, active: true]) |> Repo.one()
+
+  @doc """
   Creates a round.
 
   ## Examples
@@ -386,6 +458,20 @@ defmodule Grantland.Engine do
     %Round{}
     |> Round.changeset(attrs)
     |> Repo.insert()
+  end
+
+  defp create_first_active_round_for_pool(pool) do
+    case List.first(pool.rounds) do
+      nil ->
+        %Round{}
+        |> Round.changeset(%{active: true, pool_id: pool.id})
+        |> Repo.insert()
+
+        Repo.reload!(pool) |> Repo.preload(:rounds)
+
+      _not_nil ->
+        {:error, "Pool already started"}
+    end
   end
 
   @doc """

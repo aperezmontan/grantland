@@ -54,7 +54,7 @@ defmodule GrantlandWeb.PoolLive.FormComponent do
     current_user = socket.assigns.current_user
     pool_params = Map.put(pool_params, "user_id", current_user.id)
 
-    case Engine.create_pool(pool_params) do
+    case Engine.activate_pool(pool_params) do
       {:ok, _pool} ->
         {:noreply,
          socket

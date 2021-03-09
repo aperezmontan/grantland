@@ -8,6 +8,7 @@ defmodule Grantland.Engine.Pool do
     field :name, :string
 
     embeds_one :ruleset, Ruleset, on_replace: :update do
+      # TODO: check if these defaults and mins are actually respected. Probably just using the defstruct in Ruleset
       field :state, Ecto.Enum,
         values: Ruleset.valid_pool_states(),
         default: :initialized
@@ -20,6 +21,7 @@ defmodule Grantland.Engine.Pool do
     end
 
     belongs_to :user, Grantland.Identity.User
+    has_many :rounds, Grantland.Engine.Round
 
     timestamps()
   end
