@@ -521,6 +521,40 @@ defmodule Grantland.Engine do
     Round.changeset(round, attrs)
   end
 
+  def delete_round_games_not_in_this_set(round, game_ids) when is_list(game_ids) do
+    from(gr in "games_rounds",
+      where: gr.round_id == ^round.id and gr.game_id not in ^game_ids
+    )
+    |> Repo.delete_all()
+
+    round
+  end
+
+  @doc """
+  Query games available on specific date range.
+
+  * `query` - Initial query to start with.  Only games included in this
+    query will be considered.
+  * `round` - round to look for in games_rounds
+  """
+
+  def games_unmatched_to_round(%Grantland.Engine.Round{id: round_id}, query \\ Grantland.Data.Game) do
+    from(game in query,
+      left_join: game_round in "games_rounds",
+      on: game_round.game_id == game.id and game_round.round_id == ^round_id,
+      where: is_nil(game_round.game_id)
+    )
+    |> Repo.all()
+  end
+
+  def games_matched_to_round(%Grantland.Engine.Round{id: round_id}, query \\ Grantland.Data.Game) do
+    from(game in query,
+      inner_join: game_round in "games_rounds",
+      on: game_round.game_id == game.id and game_round.round_id == ^round_id
+    )
+    |> Repo.all()
+  end
+
   def upsert_round_games(round, game_ids) when is_list(game_ids) do
     games =
       Grantland.Data.Game

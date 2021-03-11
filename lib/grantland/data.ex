@@ -22,6 +22,31 @@ defmodule Grantland.Data do
   end
 
   @doc """
+  Returns the list of games.
+
+  ## Examples
+
+      iex> list_games()
+      [%{id: 1, home_team: "Mets, away_team: "Yankees"}, ...]
+
+  """
+  def list_games_with_team_name do
+    Repo.all(Game) |> format_games_with_team_names
+  end
+
+  defp format_games_with_team_names(games) do
+    Enum.map(games, fn game ->
+      game = game_for_view(game)
+
+      %{
+        id: game.id,
+        home_team: game.home_team,
+        away_team: game.away_team
+      }
+    end)
+  end
+
+  @doc """
   Returns the list of games formatted for the view.
 
   ## Examples

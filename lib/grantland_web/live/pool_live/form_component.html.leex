@@ -23,6 +23,10 @@
     </div>
   <% end %>
 
+  <%= label f, :games %>
+  <%= multiple_select(f, :games, @games, selected: @selected_games, class: "form-control") %>
+  <%= error_tag f, :games %>
+
   <div>
     <%= submit "Save", phx_disable_with: "Saving..." %>
   </div>
