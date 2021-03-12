@@ -18,6 +18,7 @@ defmodule Grantland.Engine.Pool do
         default: :knockout
 
       field :rounds, :integer, min: 1, default: 1
+      field :picks_per_round, :map, default: %{}
     end
 
     belongs_to :user, Grantland.Identity.User
@@ -44,8 +45,6 @@ defmodule Grantland.Engine.Pool do
         false -> params
       end
 
-    schema
-    |> cast(params, [:state, :pool_type, :rounds])
-    |> validate_required([:state, :pool_type, :rounds])
+    schema |> Ruleset.changeset(params)
   end
 end

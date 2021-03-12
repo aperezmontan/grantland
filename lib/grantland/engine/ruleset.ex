@@ -1,4 +1,6 @@
 defmodule Grantland.Engine.Ruleset do
+  import Ecto.Changeset
+
   alias __MODULE__
 
   @valid_pool_states [:initialized, :in_progress, :completed]
@@ -6,7 +8,8 @@ defmodule Grantland.Engine.Ruleset do
 
   defstruct state: :initialized,
             pool_type: :knockout,
-            rounds: 1
+            rounds: 1,
+            picks_per_round: %{"round_1" => 1}
 
   def new(attrs \\ %{}), do: struct(Ruleset, attrs)
 
@@ -49,4 +52,51 @@ defmodule Grantland.Engine.Ruleset do
   # so we need to guard against them.
   def dump(%Ruleset{} = ruleset), do: {:ok, Map.from_struct(ruleset)}
   def dump(_), do: :error
+
+  @doc false
+  def changeset(ruleset \\ %Ruleset{}, attrs) do
+    ruleset
+    |> cast(attrs, [:state, :pool_type, :rounds, :picks_per_round])
+    |> validate_required([:state, :pool_type, :rounds, :picks_per_round])
+    |> validate_number(:rounds, greater_than_or_equal_to: 1)
+    |> validate_inclusion(:state, @valid_pool_states)
+    |> validate_inclusion(:pool_type, @valid_pool_types)
+    |> maybe_validate_picks_per_round(ruleset)
+  end
+
+  defp maybe_validate_picks_per_round(%{changes: changes} = changeset, ruleset) do
+    case Map.has_key?(changes, :rounds) || Map.has_key?(changes, :picks_per_round) do
+      true -> validate_picks_per_round(changeset, ruleset)
+      false -> changeset
+    end
+  end
+
+  defp validate_picks_per_round(%{changes: changes} = changeset, ruleset) do
+    rounds = changes[:rounds] || ruleset.rounds
+    picks_per_round = changes[:picks_per_round] || ruleset.picks_per_round
+
+    case check_picks_per_round_keys(rounds, picks_per_round) do
+      true ->
+        case check_picks_per_round_values(rounds, picks_per_round) do
+          true -> changeset
+          false -> add_error(changeset, :picks_per_round, "Is incorrect")
+        end
+
+      false ->
+        add_error(changeset, :picks_per_round, "All rounds must have number of picks")
+    end
+  end
+
+  defp check_picks_per_round_keys(rounds, picks_per_round) do
+    Enum.all?(1..rounds, fn round_number ->
+      Map.has_key?(picks_per_round, "round_#{round_number}")
+    end)
+  end
+
+  defp check_picks_per_round_values(rounds, picks_per_round) do
+    Enum.all?(1..rounds, fn round_number ->
+      picks = picks_per_round["round_#{round_number}"]
+      is_integer(picks) && picks > 0
+    end)
+  end
 end

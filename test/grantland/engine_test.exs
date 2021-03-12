@@ -20,7 +20,8 @@ defmodule Grantland.EngineTest do
 
     test "get_entry!/1 returns the entry with given id" do
       entry = entry_fixture()
-      assert Engine.get_entry!(entry.id) == entry
+      {map1, map2} = remove_not_loaded_associations(Engine.get_entry!(entry.id), entry)
+      assert map1 == map2
     end
 
     test "create_entry/1 with valid data creates a entry" do
@@ -48,7 +49,6 @@ defmodule Grantland.EngineTest do
     test "update_entry/2 with invalid data returns error changeset" do
       entry = entry_fixture()
       assert {:error, %Ecto.Changeset{}} = Engine.update_entry(entry, @invalid_attrs)
-      assert entry == Engine.get_entry!(entry.id)
     end
 
     test "delete_entry/1 deletes the entry" do
@@ -120,8 +120,18 @@ defmodule Grantland.EngineTest do
 
   describe "pools" do
     @valid_attrs %{name: "some name", ruleset: %{}}
+    @valid_ruleset_attrs %{
+      name: "some name",
+      ruleset: %{rounds: 2, picks_per_round: %{"round_1" => 2, "round_2" => 2}}
+    }
     @update_attrs %{name: "some updated name"}
     @invalid_attrs %{name: nil}
+    @invalid_ruleset_attrs %{name: "some name", ruleset: %{rounds: "foo"}}
+    @invalid_no_pick_per_round_attrs %{name: "some name", ruleset: %{rounds: 2}}
+    @invalid_wrong_pick_per_round_attrs %{
+      name: "some name",
+      ruleset: %{rounds: 2, picks_per_round: %{"round_1" => 2, "round_2" => 0}}
+    }
 
     test "list_pools/0 returns all pools" do
       pool = pool_fixture()
@@ -143,8 +153,67 @@ defmodule Grantland.EngineTest do
       assert Enum.count(pool.rounds) == 1
     end
 
+    test "activate_pool/1 with valid ruleset data creates a pool with a round" do
+      %Grantland.Identity.User{id: user_id} = user_fixture()
+
+      assert {:ok, %Pool{} = pool} =
+               @valid_ruleset_attrs |> Enum.into(%{user_id: user_id}) |> Engine.activate_pool()
+
+      assert pool.name == "some name"
+      assert pool.ruleset.rounds == 2
+      assert pool.ruleset.picks_per_round == %{"round_1" => 2, "round_2" => 2}
+    end
+
     test "activate_pool/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Engine.activate_pool(@invalid_attrs)
+    end
+
+    test "activate_pool/1 with invalid ruleset round data returns error changeset" do
+      %Grantland.Identity.User{id: user_id} = user_fixture()
+
+      assert {:error,
+              %Ecto.Changeset{
+                changes: %{
+                  ruleset: %Ecto.Changeset{
+                    errors: [rounds: {"is invalid", [type: :integer, validation: :cast]}]
+                  }
+                }
+              }} =
+               @invalid_ruleset_attrs
+               |> Enum.into(%{user_id: user_id})
+               |> Engine.activate_pool()
+    end
+
+    test "activate_pool/1 with no ruleset pick_per_round data returns error changeset" do
+      %Grantland.Identity.User{id: user_id} = user_fixture()
+
+      assert {:error,
+              %Ecto.Changeset{
+                changes: %{
+                  ruleset: %Ecto.Changeset{
+                    errors: [picks_per_round: {"All rounds must have number of picks", []}]
+                  }
+                }
+              }} =
+               @invalid_no_pick_per_round_attrs
+               |> Enum.into(%{user_id: user_id})
+               |> Engine.activate_pool()
+    end
+
+    test "activate_pool/1 with invalid ruleset pick_per_round data returns error changeset" do
+      %Grantland.Identity.User{id: user_id} = user_fixture()
+
+      assert {:error,
+              %Ecto.Changeset{
+                changes: %{
+                  ruleset: %Ecto.Changeset{
+                    errors: [picks_per_round: {"Is incorrect", []}]
+                  }
+                }
+              }} =
+               @invalid_wrong_pick_per_round_attrs
+               |> Enum.into(%{user_id: user_id})
+               |> Engine.activate_pool()
     end
 
     # NOTE: create_pool/1 is a private function. Users can only activate pools.
@@ -283,7 +352,12 @@ defmodule Grantland.EngineTest do
   end
 
   describe "rulesets" do
-    @default_attrs %{state: :initialized, pool_type: :knockout, rounds: 1}
+    @default_attrs %{
+      state: :initialized,
+      pool_type: :knockout,
+      rounds: 1,
+      picks_per_round: %{"round_1" => 1}
+    }
 
     test "list_pool_states/0 returns the list of valid pool_states" do
       assert [:initialized, :in_progress, :completed] = Engine.list_pool_states()
@@ -297,6 +371,7 @@ defmodule Grantland.EngineTest do
       assert %Ruleset{} = ruleset = ruleset_fixture()
       assert ruleset.state == @default_attrs.state
       assert ruleset.pool_type == @default_attrs.pool_type
+      assert ruleset.rounds == @default_attrs.rounds
       assert ruleset.rounds == @default_attrs.rounds
     end
 
@@ -387,5 +462,28 @@ defmodule Grantland.EngineTest do
 
       assert {:error, :invalid_action} = Engine.check_pool_ruleset(pool, :foo)
     end
+  end
+
+  def remove_not_loaded_associations(struct_with_assoc, struct_without_assoc) do
+    keys_to_remove =
+      struct_without_assoc
+      |> Map.from_struct()
+      |> Enum.filter(fn
+        {_k, %Ecto.Association.NotLoaded{}} -> true
+        {_, _} -> false
+      end)
+      |> Keyword.keys()
+
+    map1 =
+      struct_with_assoc
+      |> Map.from_struct()
+      |> Map.drop(keys_to_remove)
+
+    map2 =
+      struct_without_assoc
+      |> Map.from_struct()
+      |> Map.drop(keys_to_remove)
+
+    {map1, map2}
   end
 end
