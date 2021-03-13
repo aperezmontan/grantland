@@ -5,27 +5,34 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <%= csrf_meta_tag() %>
-    <%= live_title_tag assigns[:page_title] || "Grantland", suffix: " · Phoenix Framework" %>
+    <%= live_title_tag assigns[:page_title] || "Grantland" %>
     <link phx-track-static rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
     <script defer phx-track-static type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </head>
   <body>
-    <header>
-      <section class="container">
-        <%= render "_links.html", assigns %>
-        <nav role="navigation">
-          <ul>
-            <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-              <li><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
-            <% end %>
-            <%= render "_user_menu.html", assigns %>
-          </ul>
-        </nav>
-        <a href="https://phoenixframework.org/" class="phx-logo">
-          <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
-        </a>
-      </section>
-    </header>
-    <%= @inner_content %>
+    <section class="layout">
+      <nav class="nav">
+        <button class="js-toggle-grid-columns">Toggle grid columns</button>
+        <button class="js-toggle-grid-gap">Toggle grid gap</button>
+      </nav>
+      <div class="left sidebar"></div>
+      <div class="main">
+
+        <div class="rando"></div>
+        <div class="random"></div>
+        <div class="more-random"></div>
+        <div class="tiny-random"></div>
+
+        <%= Enum.map(1..72, fn x -> %>
+          <div class="main-box box-<%= x %>">
+            <div class="circle">FOO</div>
+          </div>
+        <% end) %>
+      </div>
+
+      <div class="right sidebar">Grantland</div>
+      <div class="footer">
+        <button class="btn js-add-card">NOPE</button>
+      </div>
+    </section>
   </body>
-</html>

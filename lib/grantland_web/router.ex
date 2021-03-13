@@ -63,6 +63,11 @@ defmodule GrantlandWeb.Router do
     live "/admin_dashboard", AdminDashboardLive, :index
   end
 
+  scope "/", GrantlandWeb do
+    pipe_through [:browser, :require_authenticated_user, :user]
+    live "/layout", LayoutLive, :index
+  end
+
   # REAL ROUTES
 
   # requires admin
