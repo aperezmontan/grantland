@@ -6,16 +6,17 @@ defmodule GrantlandWeb.EntryLive.Show do
   @impl true
   def mount(_params, session, socket) do
     socket = assign_defaults(session, socket)
-    IO.inspect(socket, label: "THE SOCKET")
     {:ok, socket}
   end
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
+    entry = Engine.get_entry!(id)
+
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:entry, Engine.get_entry!(id))}
+     |> assign(:entry, entry)}
   end
 
   defp page_title(:show), do: "Show Entry"

@@ -22,7 +22,9 @@ defmodule Grantland.Engine.Pool do
     end
 
     belongs_to :user, Grantland.Identity.User
+    has_many :entries, Grantland.Engine.Entry
     has_many :rounds, Grantland.Engine.Round
+    has_many :picks, through: [:entries, :picks]
 
     timestamps()
   end

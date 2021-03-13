@@ -1,7 +1,7 @@
 defmodule GrantlandWeb.EntryLive.FormComponent do
   use GrantlandWeb, :live_component
 
-  alias Grantland.Engine
+  alias Grantland.{Data, Engine}
 
   @impl true
   def mount(socket) do
@@ -14,10 +14,28 @@ defmodule GrantlandWeb.EntryLive.FormComponent do
   def update(%{entry: entry} = assigns, socket) do
     changeset = Engine.change_entry(entry)
 
+    options_for_round =
+      case Ecto.assoc_loaded?(entry.picks) && entry.picks do
+        false ->
+          []
+
+        [] ->
+          []
+
+        picks ->
+          Enum.map(picks, fn pick ->
+            Engine.get_active_round_in_pool(entry.pool.id)
+            |> Engine.games_matched_to_round(Grantland.Data.Game, pick.selection[:key])
+            |> Data.parse_teams_in_games()
+            |> Enum.flat_map(fn game -> game end)
+          end)
+      end
+
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)}
+     |> assign(:changeset, changeset)
+     |> assign(:options_for_round, options_for_round)}
   end
 
   @impl true

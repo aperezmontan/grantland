@@ -11,7 +11,7 @@ defmodule GrantlandWeb.PoolLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    pool = Engine.get_pool!(id)
+    pool = Engine.get_pool_with_entries!(id)
 
     games_for_next_round =
       Engine.get_active_round_in_pool(pool.id)

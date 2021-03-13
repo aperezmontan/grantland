@@ -59,7 +59,47 @@
     </table>
   <% end %>
 
+  <strong>Entries</strong>
+  <%= case @pool.entries do %>
+  <% [] -> %>
+    <div>
+      No entries yet
+    </div>
+  <% entries -> %>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Picks</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="entry_for_next_round">
+        <%= for entry <- entries do %>
+          <tr>
+            <td><%= entry.name %></td>
+            <td>
+              <%= case entry.picks do %>
+              <% [] -> %>
+                <div>
+                  No picks yet
+                </div>
+              <% picks -> %>
+                <%= for pick <- picks do %>
+                  <%= pick.selection.name %>
+                <% end %>
+              <% end %>
+            </td>
+            <td>
+              <span><%= live_patch "Edit", to: Routes.pool_show_path(@socket, :edit, entry), class: "button" %></span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
 <%= if can_edit(@pool, @current_user) do %>
-  <span><%= live_patch "Edit", to: Routes.pool_show_path(@socket, :edit, @pool), class: "button" %></span>
+  <span><%= live_patch "Edit", to: Routes.pool_show_path(@socket, :edit, @pool) %></span>
 <% end %>
 <span><%= live_redirect "Back", to: Routes.pool_index_path(@socket, :index) %></span>

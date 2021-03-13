@@ -6,7 +6,6 @@ defmodule Grantland.EngineTest do
 
   alias Grantland.Engine
   alias Grantland.Engine.{Entry, Pick, Pool, Round, Ruleset}
-  # alias Grantland.Engine.Pool.Grantland.Engine.Ruleset
 
   describe "entries" do
     @valid_attrs %{name: "some name"}
@@ -25,6 +24,18 @@ defmodule Grantland.EngineTest do
     end
 
     test "create_entry/1 with valid data creates a entry" do
+      %Pool{id: pool_id} = pool_fixture()
+      %Grantland.Identity.User{id: user_id} = user_fixture()
+
+      assert {:ok, %Entry{} = entry} =
+               @valid_attrs
+               |> Enum.into(%{pool_id: pool_id, user_id: user_id})
+               |> Engine.create_entry()
+
+      assert entry.name == "some name"
+    end
+
+    test "create_entry/1 with valid data creates an entry and the picks for that entry" do
       %Pool{id: pool_id} = pool_fixture()
       %Grantland.Identity.User{id: user_id} = user_fixture()
 

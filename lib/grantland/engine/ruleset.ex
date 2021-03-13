@@ -95,8 +95,18 @@ defmodule Grantland.Engine.Ruleset do
 
   defp check_picks_per_round_values(rounds, picks_per_round) do
     Enum.all?(1..rounds, fn round_number ->
-      picks = picks_per_round["round_#{round_number}"]
-      is_integer(picks) && picks > 0
+      picks_per_round["round_#{round_number}"] |> picks_number_valid?
     end)
+  end
+
+  defp picks_number_valid?(picks) do
+    (is_integer(picks) && picks > 0) || (is_bitstring(picks) && parsed_pick(picks) > 0)
+  end
+
+  defp parsed_pick(picks) do
+    case Integer.parse(picks) do
+      {integer, ""} -> integer
+      :error -> 0
+    end
   end
 end

@@ -12,6 +12,7 @@ defmodule Grantland.Engine.Round do
     field :active, :boolean, default: false
 
     belongs_to :pool, Grantland.Engine.Pool
+    has_many :picks, Grantland.Engine.Pick
     many_to_many :games, Grantland.Data.Game, join_through: "games_rounds", on_replace: :delete
 
     timestamps()

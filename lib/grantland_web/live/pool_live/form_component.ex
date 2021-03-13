@@ -17,7 +17,17 @@ defmodule GrantlandWeb.PoolLive.FormComponent do
 
   @impl true
   def update(%{pool: pool} = assigns, socket) do
-    selected_games = Engine.get_active_round_in_pool(pool.id) |> Engine.games_matched_to_round |> Enum.map(fn game -> game.id end)
+    selected_games =
+      case is_nil(pool.id) do
+        true ->
+          []
+
+        false ->
+          Engine.get_active_round_in_pool(pool.id)
+          |> Engine.games_matched_to_round()
+          |> Enum.map(fn game -> game.id end)
+      end
+
     changeset = Engine.change_pool(pool)
 
     {:ok,
@@ -33,8 +43,10 @@ defmodule GrantlandWeb.PoolLive.FormComponent do
       socket.assigns.pool
       |> Engine.change_pool(pool_params)
       |> Map.put(:action, :validate)
+      |> IO.inspect(label: "THE CHANGESET")
 
-    {:noreply, socket |> assign(selected_games: pool_params["games"]) |> assign(:changeset, changeset)}
+    {:noreply,
+     socket |> assign(selected_games: pool_params["games"]) |> assign(:changeset, changeset)}
   end
 
   def handle_event("save", %{"pool" => pool_params}, socket) do
@@ -44,12 +56,13 @@ defmodule GrantlandWeb.PoolLive.FormComponent do
   defp save_pool(socket, :edit, pool_params) do
     current_user = socket.assigns.current_user
     pool_params = Map.put(pool_params, "user_id", current_user.id)
+
     game_ids =
       pool_params["games"]
-      |>Enum.map(fn game_id ->
-          {int_game_id, ""} = Integer.parse(game_id)
-          int_game_id
-        end)
+      |> Enum.map(fn game_id ->
+        {int_game_id, ""} = Integer.parse(game_id)
+        int_game_id
+      end)
 
     case Engine.update_pool(socket.assigns.pool, pool_params) do
       {:ok, pool} ->

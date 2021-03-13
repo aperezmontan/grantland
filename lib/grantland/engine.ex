@@ -41,7 +41,7 @@ defmodule Grantland.Engine do
 
   """
   # TODO: Get rid of these preloads if possible
-  def get_entry!(id), do: Repo.get!(Entry, id) |> Repo.preload([:pool])
+  def get_entry!(id), do: Repo.get!(Entry, id) |> Repo.preload([:picks, :pool])
 
   @doc """
   Gets a single entry with the picks preloaded.
@@ -294,6 +294,22 @@ defmodule Grantland.Engine do
   def get_pool!(id), do: Repo.get!(Pool, id)
 
   @doc """
+  Gets a single pool with its entries preloaded.
+
+  Raises `Ecto.NoResultsError` if the Pool does not exist.
+
+  ## Examples
+
+      iex> get_pool_with_entries!(123)
+      %Pool{}
+
+      iex> get_pool_with_entries!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_pool_with_entries!(id), do: Repo.get!(Pool, id) |> Repo.preload(entries: :picks)
+
+  @doc """
   Gets a single pool with its rounds preloaded.
 
   Raises `Ecto.NoResultsError` if the Pool does not exist.
@@ -538,7 +554,10 @@ defmodule Grantland.Engine do
   * `round` - round to look for in games_rounds
   """
 
-  def games_unmatched_to_round(%Grantland.Engine.Round{id: round_id}, query \\ Grantland.Data.Game) do
+  def games_unmatched_to_round(
+        %Grantland.Engine.Round{id: round_id},
+        query \\ Grantland.Data.Game
+      ) do
     from(game in query,
       left_join: game_round in "games_rounds",
       on: game_round.game_id == game.id and game_round.round_id == ^round_id,
@@ -547,11 +566,26 @@ defmodule Grantland.Engine do
     |> Repo.all()
   end
 
-  def games_matched_to_round(%Grantland.Engine.Round{id: round_id}, query \\ Grantland.Data.Game) do
-    from(game in query,
-      inner_join: game_round in "games_rounds",
-      on: game_round.game_id == game.id and game_round.round_id == ^round_id
-    )
+  def games_matched_to_round(
+        %Grantland.Engine.Round{id: round_id},
+        query \\ Grantland.Data.Game,
+        key \\ nil
+      ) do
+    case key do
+      nil ->
+        from(game in query,
+          inner_join: game_round in "games_rounds",
+          on: game_round.game_id == game.id and game_round.round_id == ^round_id
+        )
+
+      key ->
+        from(game in query,
+          inner_join: game_round in "games_rounds",
+          on:
+            game_round.game_id == game.id and game_round.round_id == ^round_id and
+              not (game.away_team == ^key or game.home_team == ^key)
+        )
+    end
     |> Repo.all()
   end
 
@@ -636,6 +670,15 @@ defmodule Grantland.Engine do
 
   def check(%Pool.Grantland.Engine.Ruleset{state: :completed}, _action),
     do: {:error, "Pool cannot be updated. It's complete."}
+
+  def sql(resource, query) do
+    result = Ecto.Adapters.SQL.query!(Repo, query)
+    Enum.map(result.rows, &Repo.load(resource, {result.columns, &1}))
+  end
+
+  def sql(query) do
+    Ecto.Adapters.SQL.query!(Repo, query)
+  end
 
   def subscribe do
     Phoenix.PubSub.subscribe(Grantland.PubSub, "engine")

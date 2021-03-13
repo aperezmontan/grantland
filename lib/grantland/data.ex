@@ -157,6 +157,10 @@ defmodule Grantland.Data do
     |> Enum.map(&{&1.short_name, &1.key})
   end
 
+  def get_team_from_pick(pick) do
+    College.teams()[pick.selection]
+  end
+
   def game_for_view(game) do
     {:ok, home_team} = College.team(game.home_team)
     {:ok, away_team} = College.team(game.away_team)
@@ -175,6 +179,15 @@ defmodule Grantland.Data do
 
   def statuses_for_view do
     Enum.map(Ecto.Enum.values(Game, :status), &{Phoenix.Naming.humanize(&1), &1})
+  end
+
+  @spec parse_teams_in_games(any) :: list
+  def parse_teams_in_games(games) do
+    Enum.map(games, fn game ->
+      {:ok, home_team} = College.team(game.home_team)
+      {:ok, away_team} = College.team(game.away_team)
+      [home_team, away_team]
+    end)
   end
 
   def subscribe do
