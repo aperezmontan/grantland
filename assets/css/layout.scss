@@ -1,0 +1,124 @@
+body {
+  background-color: honeydew;
+}
+
+.box--expanded {
+  grid-column: span 3;
+  grid-row: span 3;
+  .box__img {
+    transform: scale(1.03);
+  }
+}
+
+.layout {
+  display: grid;
+  height: 100vh;
+  width: 100vw;
+  grid-gap: 1rem;
+  grid-template-areas:
+    "left-sidebar nav nav nav right-sidebar"
+    "left-sidebar main main main right-sidebar"
+    ". footer footer footer .";
+  grid-template-rows: 80px auto 40px;
+}
+
+div {
+  background-color: honeydew;
+}
+
+.left.sidebar {
+  grid-area: left-sidebar;
+}
+
+.footer {
+  grid-area: footer;
+  background-color: grey;
+}
+
+// ############# FOR THE TRANSITIONS #############
+.main.main--big-columns {
+  grid-template-columns: repeat(20, 1fr);
+  grid-template-rows: repeat(20, 1fr);
+  // grid-template-rows: repeat(auto-fit, minmax(20, 1fr));
+}
+
+.main.main--big-gap {
+  gap: 2rem;
+}
+// ################################################
+
+.phx-connected {
+  grid-area: main;
+  display: grid;
+}
+
+.main {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  gap: 1rem;
+  
+  .main-box{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background-color: grey;
+    border-radius: 10%;
+    opacity: 30%;
+
+    .circle {
+      background: lightblue;
+      border-radius: 50%;
+      width: 80%;
+      height: 80%;
+    }
+  }
+
+}
+
+.nav {
+  grid-area: nav;
+  background-color: grey;
+  display: flex;
+  align-items: center;
+}
+
+// ############# RANDOM BOXES TO ADD SOME COLOR #############
+.rando {
+  background-color: teal;
+  grid-area: 2 / 3 / span 4 / span 3;
+}
+
+.random {
+  background-color: cornflowerblue;
+  grid-area: 7 / 6 / span 2 / span 3;
+}
+
+.more-random {
+  background-color: teal;
+  grid-area: 8 / 1 / span 3 / span 3;
+}
+
+.tiny-random {
+  background-color: cornflowerblue;
+  grid-area: 1 / 10 / span 1 / span 1;
+}
+// ##########################################################
+
+.right.sidebar {
+  padding-top: 1em;
+  padding-right: .5em;
+  grid-area: right-sidebar;
+  writing-mode: vertical-rl;
+  text-align: center;
+  text-transform: uppercase;
+  text-align: justify;
+  font-size: 4.3vw;
+}
+
+.right.sidebar:after {
+  content: "";
+  display: inline-block;
+  width: 100%;
+}

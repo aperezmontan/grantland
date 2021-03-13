@@ -1,0 +1,12 @@
+<div class="main">
+  <div class="rando"></div>
+  <div class="random"></div>
+  <div class="more-random"></div>
+  <div class="tiny-random"></div>
+
+  <%= Enum.map(1..72, fn x -> %>
+    <div class="main-box box-<%= x %>">
+      <div class="circle">BAR</div>
+    </div>
+  <% end) %>
+</div>

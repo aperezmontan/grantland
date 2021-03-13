@@ -2,6 +2,7 @@
 // The MiniCssExtractPlugin is used to separate it out into
 // its own CSS file.
 import "../css/app.scss"
+import * as animateCSSGrid from "./animate-css-grid.js"
 
 // webpack automatically bundles all modules in your
 // entry points. Those entry points can be configured
@@ -33,4 +34,58 @@ liveSocket.connect()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
+
+const grid = document.querySelector(".main");
+
+// event handler to toggle grid sizing
+document
+  .querySelector(".js-toggle-grid-columns")
+  .addEventListener("click", () => grid.classList.toggle("main--big-columns"));
+
+document
+  .querySelector(".js-toggle-grid-gap")
+  .addEventListener("click", () => grid.classList.toggle("main--big-gap"));
+
+const addCard = () => {
+  return fetch(
+    `https://source.unsplash.com/random/${Math.floor(Math.random() * 1000)}`
+  ).then(
+    response => {
+      grid.insertAdjacentHTML(
+        "beforeend",
+        `  <div class="card">
+          <div>
+            <img src=${response.url} class="card__img"/>
+          </div>
+        </div>
+    `
+      );
+    },
+    () => {}
+  );
+};
+
+// event handler to add a new card
+document.querySelector(".js-add-card").addEventListener("click", addCard);
+
+// event handler to toggle card size on click
+grid.addEventListener("click", ev => {
+  let target = ev.target;
+  while (target.tagName !== "HTML") {
+    if (target.classList.contains("card")) {
+      target.classList.toggle("card--expanded");
+      return;
+    }
+    target = target.parentElement;
+  }
+});
+
+animateCSSGrid.wrapGrid(grid, {
+  duration: 350,
+  stagger: 10,
+  onStart: elements =>
+    console.log(`started animation for ${elements.length} elements`),
+  onEnd: elements =>
+    console.log(`finished animation for ${elements.length} elements`)
+});
 
