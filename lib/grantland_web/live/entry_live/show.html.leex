@@ -18,8 +18,15 @@
   </li>
 
   <li>
-    <strong>Round:</strong>
-    <%= @entry.round %>
+    <strong>Picks:</strong>
+    <%= case @entry.picks do %>
+    <% [] -> %>
+      No picks yet
+    <% picks -> %>
+      <%= for team <- picks do %>
+        <%= picks.name %>
+      <% end %>
+    <% end %>
   </li>
 
 </ul>

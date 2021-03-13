@@ -1,15 +1,39 @@
 defmodule GrantlandWeb.PoolLive.FormComponent do
   use GrantlandWeb, :live_component
 
+  alias Grantland.Data
   alias Grantland.Engine
 
   @impl true
+  def mount(socket) do
+    pool_types = Engine.list_pool_types()
+
+    games =
+      Data.list_games_with_team_name() |> Enum.map(&{"#{&1.away_team} at #{&1.home_team}", &1.id})
+
+    socket = assign(socket, pool_types: pool_types, games: games)
+    {:ok, socket}
+  end
+
+  @impl true
   def update(%{pool: pool} = assigns, socket) do
+    selected_games =
+      case is_nil(pool.id) do
+        true ->
+          []
+
+        false ->
+          Engine.get_active_round_in_pool(pool.id)
+          |> Engine.games_matched_to_round()
+          |> Enum.map(fn game -> game.id end)
+      end
+
     changeset = Engine.change_pool(pool)
 
     {:ok,
      socket
      |> assign(assigns)
+     |> assign(:selected_games, selected_games)
      |> assign(:changeset, changeset)}
   end
 
@@ -19,8 +43,10 @@ defmodule GrantlandWeb.PoolLive.FormComponent do
       socket.assigns.pool
       |> Engine.change_pool(pool_params)
       |> Map.put(:action, :validate)
+      |> IO.inspect(label: "THE CHANGESET")
 
-    {:noreply, assign(socket, :changeset, changeset)}
+    {:noreply,
+     socket |> assign(selected_games: pool_params["games"]) |> assign(:changeset, changeset)}
   end
 
   def handle_event("save", %{"pool" => pool_params}, socket) do
@@ -31,8 +57,19 @@ defmodule GrantlandWeb.PoolLive.FormComponent do
     current_user = socket.assigns.current_user
     pool_params = Map.put(pool_params, "user_id", current_user.id)
 
+    game_ids =
+      pool_params["games"]
+      |> Enum.map(fn game_id ->
+        {int_game_id, ""} = Integer.parse(game_id)
+        int_game_id
+      end)
+
     case Engine.update_pool(socket.assigns.pool, pool_params) do
-      {:ok, _pool} ->
+      {:ok, pool} ->
+        Engine.get_active_round_in_pool(pool.id)
+        |> Engine.delete_round_games_not_in_this_set(game_ids)
+        |> Engine.upsert_round_games(game_ids)
+
         {:noreply,
          socket
          |> put_flash(:info, "Pool updated successfully")
@@ -47,7 +84,7 @@ defmodule GrantlandWeb.PoolLive.FormComponent do
     current_user = socket.assigns.current_user
     pool_params = Map.put(pool_params, "user_id", current_user.id)
 
-    case Engine.create_pool(pool_params) do
+    case Engine.activate_pool(pool_params) do
       {:ok, _pool} ->
         {:noreply,
          socket

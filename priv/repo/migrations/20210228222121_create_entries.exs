@@ -5,7 +5,7 @@ defmodule Grantland.Repo.Migrations.CreateEntries do
     create table(:entries) do
       add :name, :string
       add :round, :integer
-      add :pool_id, references(:pools, on_delete: :nothing)
+      add :pool_id, references(:pools, on_delete: :delete_all)
 
       timestamps()
     end

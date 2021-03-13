@@ -86,6 +86,9 @@ defmodule GrantlandWeb.Router do
     put "/users/settings", UserSettingsController, :update
     get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
 
+    live "/pools/:id/show/entries/:id/show/edit", PoolLive.Show, :edit
+    live "/pools/:id/show/entries/new", PoolLive.Show, :new
+
     # Entries
     live "/entries/new", EntryLive.Index, :new
     live "/entries/:id/edit", EntryLive.Index, :edit

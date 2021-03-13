@@ -16,8 +16,11 @@
   <%# <%= error_tag f, :round %>
 
   <%= label f, :pool %>
+  <%# TODO: move this to view helper %>
   <%= select f, :pool_id, Enum.map(@pools, &{&1.name, &1.id}) %>
   <%= error_tag f, :pool %>
+
+  <%# TODO: move this to view helper %>
 
   <div>
     <%= submit "Save", phx_disable_with: "Saving..." %>

@@ -10,5 +10,36 @@
   <%= text_input f, :name %>
   <%= error_tag f, :name %>
 
-  <%= submit "Save", phx_disable_with: "Saving..." %>
+  <%= inputs_for f, :ruleset, fn r -> %>
+    <div class="form-group">
+
+      <%= label r, :pool_type %>
+      <%# TODO: Needs a lot of view helpphe %>
+      <%= select r, :pool_type, Enum.map(@pool_types, &{String.capitalize(Atom.to_string(&1)), &1}) %>
+      <%= error_tag r, :pool_type %>
+
+      <%= if ((is_nil(r.params["pool_type"]) && r.data.pool_type == :knockout) || (r.params["pool_type"] == "knockout")) do %>
+        <%= label r, :rounds %>
+        <%= number_input r, :rounds, min: 1 %>
+        <%= error_tag r, :rounds %>
+
+        <%= label r, :picks_per_round %>
+        <% rounds = if is_nil(r.params["rounds"]), do: r.data.rounds, else: String.to_integer(r.params["rounds"]) %>
+
+        <%= Enum.map(1..rounds, fn round_number -> %>
+          <% picks = if is_nil(r.params["picks_per_round"]), do: r.data.picks_per_round["round_#{round_number}"], else: r.params["picks_per_round"]["round_#{round_number}"] %>
+          <span>Round: <%= round_number %></span>
+          <input id="pool-form_ruleset_picks_per_round_round_<%= round_number %>" min="1" name="pool[ruleset][picks_per_round][round_<%= round_number %>]" type="number" value=<%= picks || 1 %>>
+        <% end) %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= label f, :games, "Games for Round 1" %>
+  <%= multiple_select(f, :games, @games, selected: @selected_games, class: "form-control") %>
+  <%= error_tag f, :games %>
+
+  <div>
+    <%= submit "Save", phx_disable_with: "Saving..." %>
+  </div>
 </form>

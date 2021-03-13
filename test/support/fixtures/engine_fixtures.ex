@@ -43,26 +43,33 @@ defmodule Grantland.EngineFixtures do
   def pool_fixture(attrs \\ %{}) do
     %Grantland.Identity.User{id: user_id} = user_fixture()
 
-    {:ok, pool} =
+    attrs =
+      case Map.has_key?(attrs, :ruleset) do
+        true -> attrs
+        false -> attrs |> Enum.into(%{ruleset: ruleset_fixture()})
+      end
+
+    {:ok, %Grantland.Engine.Pool{id: pool_id}} =
       attrs
       |> Enum.into(%{
         name: unique_pool_name(),
         user_id: user_id
       })
-      |> Grantland.Engine.create_pool()
+      |> Grantland.Engine.activate_pool()
 
-    pool
+    Grantland.Engine.get_pool!(pool_id)
   end
 
   def round_fixture(attrs \\ %{}) do
-    %Grantland.Engine.Pool{id: pool_id} = pool_fixture()
+    case Map.has_key?(attrs, :pool_id) do
+      true ->
+        {:ok, round} = attrs |> Grantland.Engine.create_round()
+        round
 
-    {:ok, round} =
-      attrs
-      |> Enum.into(%{pool_id: pool_id})
-      |> Grantland.Engine.create_round()
-
-    round
+      false ->
+        %Grantland.Engine.Pool{id: pool_id} = pool_fixture()
+        Grantland.Engine.get_active_round_in_pool(pool_id)
+    end
   end
 
   def ruleset_fixture(attrs \\ %{}) do

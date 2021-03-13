@@ -7,6 +7,7 @@ defmodule Grantland.Engine.Entry do
 
     belongs_to :pool, Grantland.Engine.Pool
     belongs_to :user, Grantland.Identity.User
+    has_many :picks, Grantland.Engine.Pick
 
     timestamps()
   end

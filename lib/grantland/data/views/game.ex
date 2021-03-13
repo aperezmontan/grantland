@@ -3,6 +3,7 @@ defmodule Grantland.Data.Views.Game do
   This is the Game View module.
   """
 
+  # TODO: move this to the view folder in GrantlandWeb
   @enforce_keys [
     :id,
     :home_team,

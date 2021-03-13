@@ -15,7 +15,7 @@ defmodule Grantland.Engine.Pick do
   def changeset(entry, attrs) do
     entry
     |> cast(attrs, [:selection, :entry_id, :round_id])
-    |> validate_required([:entry_id, :round_id])
+    |> validate_required([:round_id])
     |> unique_constraint([:selection, :round_id])
   end
 end

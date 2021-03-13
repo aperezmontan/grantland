@@ -2,6 +2,7 @@ defmodule GrantlandWeb.PoolLiveTest do
   use GrantlandWeb.ConnCase
 
   import Phoenix.LiveViewTest
+  import Grantland.{DataFixtures, EngineFixtures, IdentityFixtures}
 
   alias Grantland.Engine
 
@@ -9,13 +10,8 @@ defmodule GrantlandWeb.PoolLiveTest do
   @update_attrs %{name: "some updated name"}
   @invalid_attrs %{name: nil}
 
-  defp fixture(:pool) do
-    {:ok, pool} = Engine.create_pool(@create_attrs)
-    pool
-  end
-
   defp create_pool(_) do
-    pool = fixture(:pool)
+    pool = pool_fixture()
     %{pool: pool}
   end
 
