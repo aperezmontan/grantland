@@ -12,23 +12,19 @@
   <body>
     <section class="layout">
       <nav class="nav">
+        <%= render "_links.html", assigns %>
         <button class="js-toggle-grid-columns">Toggle grid columns</button>
         <button class="js-toggle-grid-gap">Toggle grid gap</button>
+            <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
+              <%# <li> %>
+              <%= #link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %>
+              <%# </li> %>
+            <% end %>
+            <%= #render "_user_menu.html", assigns %>
       </nav>
       <div class="left sidebar"></div>
-      <div class="main">
 
-        <div class="rando"></div>
-        <div class="random"></div>
-        <div class="more-random"></div>
-        <div class="tiny-random"></div>
-
-        <%= Enum.map(1..72, fn x -> %>
-          <div class="main-box box-<%= x %>">
-            <div class="circle">FOO</div>
-          </div>
-        <% end) %>
-      </div>
+      <%= @inner_content %>
 
       <div class="right sidebar">Grantland</div>
       <div class="footer">

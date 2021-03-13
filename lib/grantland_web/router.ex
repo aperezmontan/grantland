@@ -8,7 +8,7 @@ defmodule GrantlandWeb.Router do
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
-    plug :fetch_live_flash
+    # plug :fetch_live_flash
     plug :put_root_layout, {GrantlandWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
@@ -61,11 +61,6 @@ defmodule GrantlandWeb.Router do
   scope "/", GrantlandWeb do
     pipe_through [:browser, :require_authenticated_user, :admin]
     live "/admin_dashboard", AdminDashboardLive, :index
-  end
-
-  scope "/", GrantlandWeb do
-    pipe_through [:browser, :require_authenticated_user, :user]
-    live "/layout", LayoutLive, :index
   end
 
   # REAL ROUTES
@@ -132,6 +127,10 @@ defmodule GrantlandWeb.Router do
     # Pools
     live "/pools", PoolLive.Index, :index
     live "/pools/:id", PoolLive.Show, :show
+
+    # FOR SOME LAYOUT TESTING
+    live "/layout", LayoutLive, :index
+    live "/new_layout", NewLayoutLive, :index
   end
 
   # Other scopes may use custom stacks.

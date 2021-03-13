@@ -47,8 +47,12 @@ div {
 }
 // ################################################
 
-.main {
+.phx-connected {
   grid-area: main;
+  display: grid;
+}
+
+.main {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
@@ -103,8 +107,18 @@ div {
 // ##########################################################
 
 .right.sidebar {
+  padding-top: 1em;
+  padding-right: .5em;
   grid-area: right-sidebar;
   writing-mode: vertical-rl;
   text-align: center;
   text-transform: uppercase;
+  text-align: justify;
+  font-size: 4.3vw;
+}
+
+.right.sidebar:after {
+  content: "";
+  display: inline-block;
+  width: 100%;
 }
