@@ -1,5 +1,58 @@
 body {
   background-color: honeydew;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.background-container {
+  display: grid;
+  height: 100vh;
+  width: 100vw;
+  grid-gap: 1rem;
+  z-index: -100;
+  grid-template-areas:
+    "left-sidebar background-top right-sidebar"
+    "left-sidebar background-boxes right-sidebar"
+    "left-sidebar background-bottom right-sidebar";
+    grid-template-rows: 80px auto 40px;
+    grid-template-columns: auto minmax(400px, 800px) auto;
+  position: absolute;
+  line-height: 0;
+}
+
+.background-top {
+  display: grid;
+  grid-area: background-top;
+}
+
+.background-bottom {
+  display: grid;
+  grid-area: background-bottom;
+}
+
+.background-boxes-container {
+  display: grid;
+  grid-area: background-boxes;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  gap: 1rem;
+    
+  .background-box{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background-color: grey;
+    border-radius: 10%;
+    opacity: 20%;
+
+    .circle {
+      background: lightblue;
+      border-radius: 50%;
+      width: 80%;
+      height: 80%;
+    }
+  }
 }
 
 .box--expanded {
@@ -15,19 +68,18 @@ body {
   height: 100vh;
   width: 100vw;
   grid-gap: 1rem;
+  z-index: 100;
   grid-template-areas:
-    "left-sidebar nav nav nav right-sidebar"
-    "left-sidebar main main main right-sidebar"
-    "left-sidebar footer footer footer right-sidebar";
+    "nav nav nav"
+    "main main main"
+    "footer footer footer";
   grid-template-rows: 80px auto 40px;
+  // grid-template-columns: auto 50% auto;
+  padding: 0 5.5em;
 }
 
 div {
   background-color: honeydew;
-}
-
-.left.sidebar {
-  grid-area: left-sidebar;
 }
 
 .flash-container {
@@ -36,7 +88,7 @@ div {
 
 .footer {
   grid-area: footer;
-  background-color: grey;
+  // background-color: grey;
 }
 
 // ############# FOR THE TRANSITIONS #############
@@ -75,72 +127,83 @@ div {
 }
 
 .main-container {
+  background-color: transparent;
   grid-area: main;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
   gap: 1rem;
   
-  .main-box{
-    display: flex;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    background-color: grey;
-    border-radius: 10%;
-    opacity: 30%;
-
-    .circle {
-      background: lightblue;
-      border-radius: 50%;
-      width: 80%;
-      height: 80%;
-    }
+  // ############# RANDOM BOXES TO ADD SOME COLOR #############
+  .rando {
+    background-color: cornflowerblue;
+    grid-area: 2 / 3 / span 4 / span 3;
+    opacity: 1;
   }
+
+  .random {
+    background-color: teal;
+    grid-area: 7 / 6 / span 2 / span 3;
+    opacity: 1;
+  }
+
+  .more-random {
+    background-color: teal;
+    grid-area: 8 / 1 / span 3 / span 3;
+    opacity: 1;
+  }
+
+  .tiny-random {
+    background-color: cornflowerblue;
+    grid-area: 1 / 10 / span 1 / span 1;
+  }
+  // ##########################################################
 }
 
 .nav {
   grid-area: nav;
-  background-color: grey;
+  // background-color: grey;
   display: flex;
   align-items: center;
 }
 
-// ############# RANDOM BOXES TO ADD SOME COLOR #############
-.rando {
-  background-color: teal;
-  grid-area: 2 / 3 / span 4 / span 3;
-}
 
-.random {
-  background-color: cornflowerblue;
-  grid-area: 7 / 6 / span 2 / span 3;
-}
+.left.sidebar {
+  grid-area: left-sidebar;
+  align-items: end;
 
-.more-random {
-  background-color: teal;
-  grid-area: 8 / 1 / span 3 / span 3;
+  .logo p {
+    transform: rotate(-90deg);
+  }
 }
-
-.tiny-random {
-  background-color: cornflowerblue;
-  grid-area: 1 / 10 / span 1 / span 1;
-}
-// ##########################################################
 
 .right.sidebar {
-  padding-top: 1em;
-  padding-right: .5em;
   grid-area: right-sidebar;
-  writing-mode: vertical-rl;
-  text-align: center;
-  text-transform: uppercase;
-  text-align: justify;
-  font-size: 4.3vw;
+
+  .logo p {
+    transform: rotate(90deg);
+  }
 }
 
-.right.sidebar:after {
-  content: "";
-  display: inline-block;
-  width: 100%;
+.sidebar {
+  position: relative;
+  display: flex;
+  text-transform: uppercase;
+  justify-content: center;
+  z-index: -100;
+  padding: 12em 0;
+}
+
+.sidebar .logo p {
+  overflow: visible;
+  transform-origin: 50% 50%;
+}
+
+.logo {
+  position: absolute;
+}
+
+.logo p {
+  transform: rotate(-90deg);
+  font-size: 4em;
 }

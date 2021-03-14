@@ -11,22 +11,33 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.0/gsap.min.js"></script>
   </head>
   <body>
+    <section class="background-container">
+      <div class="left sidebar"><div class="logo"><p>Grantland</p></div></div>
+      <div class="background-top"></div>
+      <div class="background-boxes-container">
+        <%= Enum.map(1..100, fn x -> %>
+          <div class="background-box box-<%= x %>">
+          </div>
+        <% end) %>
+      </div>
+      <div class="right sidebar"><div class="logo"><p>Grantland</p></div></div>
+      <div class="background-bottom"></div>
+    </section>
     <section class="layout">
       <nav class="nav">
         <%= render "_links.html", assigns %>
         <button class="js-toggle-grid-columns">Toggle grid columns</button>
         <button class="js-toggle-grid-gap">Toggle grid gap</button>
-            <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-              <%# <li> %>
-              <%= #link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %>
-              <%# </li> %>
-            <% end %>
-            <%= #render "_user_menu.html", assigns %>
+          <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
+            <%# <li> %>
+            <%= #link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %>
+            <%# </li> %>
+          <% end %>
+          <%= #render "_user_menu.html", assigns %>
       </nav>
 
       <%= @inner_content %>
 
-      <div class="right sidebar">Grantland</div>
       <div class="footer">
         <button class="btn js-add-card">NOPE</button>
       </div>
