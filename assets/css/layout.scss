@@ -74,7 +74,7 @@ body {
     "main main main"
     "footer footer footer";
   grid-template-rows: 80px auto 40px;
-  // grid-template-columns: auto 50% auto;
+  grid-template-columns: auto minmax(400px, 800px) auto;
   padding: 0 5.5em;
 }
 
@@ -162,8 +162,8 @@ div {
 
 .nav {
   grid-area: nav;
-  // background-color: grey;
   display: flex;
+  justify-content: space-around;
   align-items: center;
 }
 
@@ -207,3 +207,22 @@ div {
   transform: rotate(-90deg);
   font-size: 4em;
 }
+
+// INDEX STYLES
+.index-header,
+.index-footer {
+  display: flex;
+  grid-column: 1 / -1;
+  background: none;
+}
+
+.index-row {
+  display: flex;
+  grid-column: 1 / -1;
+  border-radius: 5px;
+  border: .1em solid grey;
+  padding: 1em;
+  background-color: plum;
+}
+
+// SHOW STYLES

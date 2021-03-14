@@ -1,5 +1,3 @@
-<h1>Pools</h1>
-
 <%= if @live_action in [:new, :edit] do %>
   <%= live_modal @socket, GrantlandWeb.PoolLive.FormComponent,
     id: @pool.id || :new,
@@ -10,33 +8,14 @@
     return_to: Routes.pool_index_path(@socket, :index) %>
 <% end %>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-
-      <th></th>
-    </tr>
-  </thead>
-  <tbody id="pools">
-    <%= for pool <- @pools do %>
-      <tr id="pool-<%= pool.id %>">
-        <td><%= pool.name %></td>
-
-        <td>
-          <span><%= live_redirect "Show", to: Routes.pool_show_path(@socket, :show, pool) %></span>
-
-        <%= if can_edit(pool, @current_user) do %>
-          <span><%= live_patch "Edit", to: Routes.pool_index_path(@socket, :edit, pool) %></span>
-          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: pool.id, data: [confirm: "Are you sure?"] %></span>
-        <% end %>
-
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<%= if @current_user do %>
-  <span><%= live_patch "New Pool", to: Routes.pool_index_path(@socket, :new) %></span>
+<div class="pools index-header">
+  <h1>Pools</h1>
+</div>
+<%= for pool <- @pools do %>
+  <%= live_patch pool.name, to: Routes.pool_index_path(@socket, :edit, pool), id: "pool-#{pool.id}", class: "pools index-row" %>
 <% end %>
+<div class="pools index-footer">
+  <%= if @current_user do %>
+    <span><%= live_patch "New Pool", to: Routes.pool_index_path(@socket, :new) %></span>
+  <% end %>
+</div>

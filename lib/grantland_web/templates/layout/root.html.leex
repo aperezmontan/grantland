@@ -26,8 +26,6 @@
     <section class="layout">
       <nav class="nav">
         <%= render "_links.html", assigns %>
-        <button class="js-toggle-grid-columns">Toggle grid columns</button>
-        <button class="js-toggle-grid-gap">Toggle grid gap</button>
           <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
             <%# <li> %>
             <%= #link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %>

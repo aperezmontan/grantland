@@ -1,5 +1,3 @@
-<h1>Listing Entries</h1>
-
 <%= if @live_action in [:new, :edit] do %>
   <%= live_modal @socket, GrantlandWeb.EntryLive.FormComponent,
     id: @entry.id || :new,
@@ -10,39 +8,14 @@
     return_to: Routes.entry_index_path(@socket, :index) %>
 <% end %>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Pool</th>
-
-      <th></th>
-    </tr>
-  </thead>
-  <tbody id="entries" phx-update="prepend">
-    <%= for entry <- @entries do %>
-      <tr id="entry-<%= entry.id %>"
-        <%= if entry.__meta__.state == :deleted do %>
-          style="display:none;"
-        <% end %>
-      >
-        <td><%= entry.name %></td>
-        <td><%= entry.pool.name %></td>
-
-        <td>
-          <span><%= live_redirect "Show", to: Routes.entry_show_path(@socket, :show, entry) %></span>
-
-        <%= if can_edit(entry, @current_user) do %>
-          <span><%= live_patch "Edit", to: Routes.entry_index_path(@socket, :edit, entry) %></span>
-          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: entry.id, data: [confirm: "Are you sure?"] %></span>
-        <% end %>
-
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<%= if @current_user do %>
-  <span><%= live_patch "New Entry", to: Routes.entry_index_path(@socket, :new) %></span>
-<% end  %>
+<div class="entries index-header">
+  <h1>Entries</h1>
+</div>
+<%= for entry <- @entries do %>
+  <%= live_patch entry.name, to: Routes.entry_index_path(@socket, :edit, entry), id: "entry-#{entry.id}", class: "entries index-row" %>
+<% end %>
+<div class="entries index-footer">
+  <%= if @current_user do %>
+    <span><%= live_patch "New Entry", to: Routes.entry_index_path(@socket, :new) %></span>
+  <% end %>
+</div>
