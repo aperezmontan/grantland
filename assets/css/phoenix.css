@@ -17,24 +17,11 @@ h5{font-size: 1.6rem; letter-spacing: 0; line-height: 1.4}
 h6{font-size: 1.4rem; letter-spacing: 0; line-height: 1.2}
 pre{padding: 1em;}
 
-@keyframes transitionIn {
-  from {
-    opacity: 0;
-    transform: rotateX(-10);
-  }
-
-  to {
-    opacity: 1;
-    transform: rotateX(0);
-  }
-}
-
 .container {
   margin: 0 auto;
   padding: 0 2.0rem;
   position: relative;
   width: 100%;
-  animation: transitionIn 1s;
 }
 
 select {

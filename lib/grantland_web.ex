@@ -45,6 +45,7 @@ defmodule GrantlandWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
+        container: {:div, class: "main-container"},
         layout: {GrantlandWeb.LayoutView, "live.html"}
 
       unquote(view_helpers())

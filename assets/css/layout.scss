@@ -18,7 +18,7 @@ body {
   grid-template-areas:
     "left-sidebar nav nav nav right-sidebar"
     "left-sidebar main main main right-sidebar"
-    ". footer footer footer .";
+    "left-sidebar footer footer footer right-sidebar";
   grid-template-rows: 80px auto 40px;
 }
 
@@ -30,29 +30,52 @@ div {
   grid-area: left-sidebar;
 }
 
+.flash-container {
+  grid-area: flash;
+}
+
 .footer {
   grid-area: footer;
   background-color: grey;
 }
 
 // ############# FOR THE TRANSITIONS #############
-.main.main--big-columns {
-  grid-template-columns: repeat(20, 1fr);
-  grid-template-rows: repeat(20, 1fr);
+.main-container.main--big-columns {
+  // grid-template-columns: repeat(20, 1fr);
+  // grid-template-rows: repeat(20, 1fr);
   // grid-template-rows: repeat(auto-fit, minmax(20, 1fr));
 }
 
-.main.main--big-gap {
+.main-container.main--big-gap {
   gap: 2rem;
 }
 // ################################################
 
-.phx-connected {
-  grid-area: main;
-  display: grid;
+// @keyframes transitionIn {
+//   from {
+//     opacity: 0;
+//     transform: rotateX(-10);
+//   }
+
+//   to {
+//     opacity: 1;
+//     transform: rotateX(0);
+//   }
+// }
+
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.25s ease;
+}
+.page-enter,
+.page-leave-active {
+  opacity: 0;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
-.main {
+.main-container {
+  grid-area: main;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
@@ -74,7 +97,6 @@ div {
       height: 80%;
     }
   }
-
 }
 
 .nav {
