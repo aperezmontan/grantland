@@ -34,6 +34,7 @@ defmodule Grantland.Engine.Pool do
     pool
     |> cast(attrs, [:name, :user_id])
     |> cast_embed(:ruleset, with: &ruleset_changeset/2)
+    |> cast_assoc(:entries)
     |> validate_required([:ruleset, :name, :user_id])
     |> validate_length(:name, min: 3)
     |> unique_constraint(:name)

@@ -14,7 +14,7 @@
   <%# <%= label f, :round %>
   <%# <%= number_input f, :round %>
   <%# <%= error_tag f, :round %>
-
+<% IO.inspect(@options_for_round, label: "THE OPTIONS") %>
   <%= label f, :pool %>
   <%# TODO: move this to view helper %>
   <%= select f, :pool_id, Enum.map(@pools, &{&1.name, &1.id}) %>

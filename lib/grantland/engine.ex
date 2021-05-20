@@ -248,7 +248,7 @@ defmodule Grantland.Engine do
 
   """
   def list_pools do
-    Repo.all(Pool)
+    Repo.all(Pool) |> Repo.preload(:entries)
   end
 
   @doc """

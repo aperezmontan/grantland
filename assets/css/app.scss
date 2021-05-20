@@ -1,7 +1,12 @@
 /* This file is for your main application css. */
 @import "./phoenix.css";
 @import "./layout.scss";
+@import "./page.scss";
 @import "./pool.scss";
+@import "./show.scss";
+
+$mainBrandColor: #1C6E8C;
+$secondaryFocus: #A2DBE0;
 
 /* LiveView specific classes for your customizations */
 .phx-no-feedback.invalid-feedback,

@@ -1,0 +1,48 @@
+.hero-logo {
+  font-size: 8em;
+  grid-area: 1 / 1 / span -1 / span -1;
+  background: transparent;
+
+  div {
+    background: transparent;
+  }
+}
+
+.slogan {
+  font-size: .1em;
+}
+
+// ############# RANDOM BOXES TO ADD SOME COLOR #############
+.rando {
+  background-color: #1C6E8C;
+  grid-area: 2 / 3 / auto / span 4;
+  border-radius: 50%;
+}
+
+.random {
+  background-color: #E94F37;
+  grid-area: 7 / 6 / auto / span 3;
+  border-radius: 50%;
+}
+
+.more-random {
+  background-color: #A2DBE0;
+  grid-area: 8 / 1 / auto / span 2;
+  border-radius: 50%;
+}
+
+.tiny-random {
+  grid-area: 1 / 7 / auto / span 1;
+  text-align: center;
+  display: inline-block;
+
+  .circle {
+    background-color: #E2C044;
+    border-radius: 50%;
+  }
+}
+
+.circle {
+
+}
+// ##########################################################

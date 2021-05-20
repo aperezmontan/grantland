@@ -29,6 +29,16 @@ const main = document.querySelector(".main-container");
 window.addEventListener("phx:page-loading-start", info => {
   console.log("LOADING STARTS INFO", info)
 
+  var timeoutID;
+
+function delayedAlert() {
+  timeoutID = window.setTimeout(window.alert, 2*1000, 'That was really slow!');
+}
+
+function clearAlert() {
+  window.clearTimeout(timeoutID);
+}
+
   main.classList.replace("page-enter-active", "page-leave-active")
 // debugger
   Array.from({length: 12}, (x, i) => i).map((number) => {
@@ -99,44 +109,70 @@ window.addEventListener("phx:page-loading-stop", info => {
     ease: 'power'
   })
 
-  Array.from({length: 12}, (x, i) => i).map((number) => {
-    gsap
-    .timeline({
-      defaults: {
-        duration: .2
-      }
-    })
-    .from(`.box-${number*6+1}`, {
-      y: -200,
-      scale: 2,
-      ease: 'power'
-    })
-    .from(`.box-${number*6+2}`, {
-      x: 100,
-      scale: 3,
-      ease: 'power'
-    })
-    .from(`.box-${number*6+3}`, {
-      y: 100,
-      scale: 3,
-      ease: 'power'
-    })
-    .from(`.box-${number*6+4}`, {
-      x: -300,
-      scale: 2,
-      ease: 'power'
-    })
-    .from(`.box-${number*6+5}`, {
-      y: 300,
-      scale: 1,
-      ease: 'power'
-    })
-    .from(`.box-${number*6+6}`, {
-      x: -200,
-      scale: 1,
-      ease: 'power'
-    })
+  // Array.from({length: 12}, (x, i) => i).map((number) => {
+  //   gsap
+  //   .timeline({
+  //     defaults: {
+  //       duration: .2
+  //     }
+  //   })
+  //   .from(`.box-${number*6+1}`, {
+  //     y: -200,
+  //     scale: 2,
+  //     ease: 'power'
+  //   })
+  //   .from(`.box-${number*6+2}`, {
+  //     x: 100,
+  //     scale: 3,
+  //     ease: 'power'
+  //   })
+  //   .from(`.box-${number*6+3}`, {
+  //     y: 100,
+  //     scale: 3,
+  //     ease: 'power'
+  //   })
+  //   .from(`.box-${number*6+4}`, {
+  //     x: -300,
+  //     scale: 2,
+  //     ease: 'power'
+  //   })
+  //   .from(`.box-${number*6+5}`, {
+  //     y: 300,
+  //     scale: 1,
+  //     ease: 'power'
+  //   })
+  //   .from(`.box-${number*6+6}`, {
+  //     x: -200,
+  //     scale: 1,
+  //     ease: 'power'
+  //   })
+  // })
+
+  gsap.from('.entries', {
+    y: 200,
+    scale: 1,
+    ease: 'power'
   })
+
+  gsap.from('.pools', {
+        y: 200,
+        scale: 1,
+        ease: 'power'
+      })
+
+      gsap.from('.games', {
+            y: 200,
+            scale: 1,
+            ease: 'power'
+          })
+
+          gsap.timeline({
+            defaults: { 
+              duration: 3 
+            }
+          }).from('.phx-modal', {
+            opacity: 0,
+          })
 
 
   topbar.hide()

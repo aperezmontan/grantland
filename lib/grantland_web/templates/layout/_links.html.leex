@@ -1,10 +1,5 @@
   <%= button "Pools", to: Routes.pool_index_path(@conn, :index), method: :get %>
   <%= button "Entries", to: Routes.entry_index_path(@conn, :index), method: :get %>
-  <%= if Phoenix.Controller.current_url(@conn) |> String.contains?("new_layout") do %>
-    <%= button "Layout", to: Routes.layout_path(@conn, :index), method: :get %>
-  <% else %>
-    <%= button "New Layout", to: Routes.new_layout_path(@conn, :index), method: :get %>
-  <% end %>
   <%= if @current_user && @current_user.role == :admin do %>
     <%= button "Games", to: Routes.game_index_path(@conn, :index), method: :get %>
   <% end  %>

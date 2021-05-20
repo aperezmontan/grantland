@@ -1,4 +1,7 @@
-<h1>Show Pool</h1>
+
+<div class="header">
+  <h1>Show Pool</h1>
+</div>
 
 <%= if @live_action in [:edit] do %>
   <%= live_modal @socket, GrantlandWeb.PoolLive.FormComponent,
@@ -11,7 +14,6 @@
 <% end %>
 
 <ul>
-
   <li>
     <strong>Name:</strong>
     <%= @pool.name %>
@@ -26,6 +28,7 @@
   </li>
 </ul>
 
+<div class="games-list-in-pool-show">
   <strong>Games for next round</strong>
   <%= case @games_for_next_round do %>
   <% [] -> %>
@@ -58,8 +61,15 @@
       </tbody>
     </table>
   <% end %>
+</div>
 
-  <strong>Entries</strong>
+<div class="entries-list-in-pool-show">
+  <div>
+    <strong>Entries</strong>
+  </div>
+  <div>
+    <a href="#" phx-click="add-variant">Enter this pool</a>
+  </div>
   <%= case @pool.entries do %>
   <% [] -> %>
     <div>
@@ -98,6 +108,9 @@
       </tbody>
     </table>
   <% end %>
+</div>
+
+
 
 <%= if can_edit(@pool, @current_user) do %>
   <span><%= live_patch "Edit", to: Routes.pool_show_path(@socket, :edit, @pool) %></span>

@@ -12,7 +12,17 @@
   <h1>Pools</h1>
 </div>
 <%= for pool <- @pools do %>
-  <%= live_patch pool.name, to: Routes.pool_index_path(@socket, :edit, pool), id: "pool-#{pool.id}", class: "pools index-row" %>
+  <div class="pools index-row">
+    <%= live_redirect pool.name, to: Routes.pool_show_path(@socket, :show, pool), id: "pool-#{pool.id}", class: "index-row-link" %>
+    <div class="secondary">
+      <div class="metadata">
+        Entries: <%= Enum.count(pool.entries) %>
+      </div>
+      <div class="link button">
+        <%= live_redirect "Join", to: Routes.pool_show_path(@socket, :show, pool), id: "pool-#{pool.id}" %>
+      </div>
+    </div>
+  </div>
 <% end %>
 <div class="pools index-footer">
   <%= if @current_user do %>

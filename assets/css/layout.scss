@@ -1,24 +1,63 @@
+
+$mainBrandColor: #1C6E8C;
+$secondaryFocus: #A2DBE0;
+
+html, body {
+  height: 100%;
+}
+
+html {
+  display: table;
+  margin: auto;
+}
+
 body {
   background-color: honeydew;
+  color: $mainBrandColor;
   max-width: 100%;
   overflow-x: hidden;
+  margin: 0;
+}
+
+button {
+  background: none;
+  font-size: .1em;
 }
 
 .background-container {
   display: grid;
   height: 100vh;
   width: 100vw;
-  grid-gap: 1rem;
   z-index: -100;
   grid-template-areas:
     "left-sidebar background-top right-sidebar"
     "left-sidebar background-boxes right-sidebar"
     "left-sidebar background-bottom right-sidebar";
-    grid-template-rows: 80px auto 40px;
-    grid-template-columns: auto minmax(400px, 800px) auto;
+  grid-template-rows: 80px 800px 40px;
+  grid-template-columns: minmax(0, auto) 800px minmax(0, auto);
   position: absolute;
   line-height: 0;
+  overflow: hidden;
+  top: 0; left: 0; bottom: 0; right: 0;
+  margin: auto;
+
+  position: absolute;
+  // top: 50%;
+  // left: 50%;
+  /* bring your own prefixes */
+  // transform: translate(-50%, -50%);
 }
+
+// display: grid;
+// height: 100vh;
+// width: 100vw;
+// grid-template-areas:
+//   "nav"
+//   "main"
+//   "footer";
+// grid-template-rows: 80px auto 40px;
+// grid-template-columns: minmax(40rem, auto);
+// padding: 0 1em;
 
 .background-top {
   display: grid;
@@ -37,14 +76,14 @@ body {
   grid-template-rows: repeat(10, 1fr);
   gap: 1rem;
     
-  .background-box{
+  .background-box {
     display: flex;
     text-align: center;
     align-items: center;
     justify-content: center;
-    background-color: grey;
+    background-color: $secondaryFocus;
     border-radius: 10%;
-    opacity: 20%;
+    opacity: 40%;
 
     .circle {
       background: lightblue;
@@ -67,15 +106,11 @@ body {
   display: grid;
   height: 100vh;
   width: 100vw;
-  grid-gap: 1rem;
-  z-index: 100;
   grid-template-areas:
-    "nav nav nav"
-    "main main main"
-    "footer footer footer";
-  grid-template-rows: 80px auto 40px;
-  grid-template-columns: auto minmax(400px, 800px) auto;
-  padding: 0 5.5em;
+    "nav"
+    "main"
+    "footer";
+    grid-template-rows: 80px auto 40px;
 }
 
 div {
@@ -88,32 +123,10 @@ div {
 
 .footer {
   grid-area: footer;
-  // background-color: grey;
+  text-align: center;
+  background: transparent;
+  margin-top: 1rem;
 }
-
-// ############# FOR THE TRANSITIONS #############
-.main-container.main--big-columns {
-  // grid-template-columns: repeat(20, 1fr);
-  // grid-template-rows: repeat(20, 1fr);
-  // grid-template-rows: repeat(auto-fit, minmax(20, 1fr));
-}
-
-.main-container.main--big-gap {
-  gap: 2rem;
-}
-// ################################################
-
-// @keyframes transitionIn {
-//   from {
-//     opacity: 0;
-//     transform: rotateX(-10);
-//   }
-
-//   to {
-//     opacity: 1;
-//     transform: rotateX(0);
-//   }
-// }
 
 .page-enter-active,
 .page-leave-active {
@@ -130,34 +143,6 @@ div {
   background-color: transparent;
   grid-area: main;
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  grid-template-rows: repeat(10, 1fr);
-  gap: 1rem;
-  
-  // ############# RANDOM BOXES TO ADD SOME COLOR #############
-  .rando {
-    background-color: cornflowerblue;
-    grid-area: 2 / 3 / span 4 / span 3;
-    opacity: 1;
-  }
-
-  .random {
-    background-color: teal;
-    grid-area: 7 / 6 / span 2 / span 3;
-    opacity: 1;
-  }
-
-  .more-random {
-    background-color: teal;
-    grid-area: 8 / 1 / span 3 / span 3;
-    opacity: 1;
-  }
-
-  .tiny-random {
-    background-color: cornflowerblue;
-    grid-area: 1 / 10 / span 1 / span 1;
-  }
-  // ##########################################################
 }
 
 .nav {
@@ -173,7 +158,7 @@ div {
   align-items: end;
 
   .logo p {
-    transform: rotate(-90deg);
+    transform: rotate(-90deg) translateX(4em) translateY(2em);
   }
 }
 
@@ -181,7 +166,7 @@ div {
   grid-area: right-sidebar;
 
   .logo p {
-    transform: rotate(90deg);
+    transform: rotate(90deg) translateX(4em) translateY(2em);
   }
 }
 
@@ -190,8 +175,7 @@ div {
   display: flex;
   text-transform: uppercase;
   justify-content: center;
-  z-index: -100;
-  padding: 12em 0;
+  z-index: 50;
 }
 
 .sidebar .logo p {
@@ -201,10 +185,11 @@ div {
 
 .logo {
   position: absolute;
+  background-color: transparent;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .logo p {
-  transform: rotate(-90deg);
   font-size: 4em;
 }
 
@@ -212,17 +197,83 @@ div {
 .index-header,
 .index-footer {
   display: flex;
+  justify-content: center;
   grid-column: 1 / -1;
   background: none;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .index-row {
   display: flex;
-  grid-column: 1 / -1;
-  border-radius: 5px;
-  border: .1em solid grey;
+  // grid-column: 1 / -1;
+  border-radius: .4rem;
+  background-color: transparent;
+  border: 1px solid white;
+  // padding: 55rem;
+  font-size: .5em;
+  justify-content: space-between;
+  align-items: center;
   padding: 1em;
-  background-color: plum;
+  margin: 1em;
+
+  .index-row-link {
+    color: $mainBrandColor;
+    text-overflow: ellipsis;
+    background: none;
+    
+    @media only screen and (min-device-width: 480px) and (max-device-width: 720px) {
+      font-size: 2em;
+    }
+
+    @media only screen and (min-device-width: 720px) {
+      font-size: 3em;
+    }
+  }
+
+  .secondary {
+    display: flex;
+    flex-direction: column;
+    background: none;
+    align-items: center;
+    justify-content: space-around;
+    font-size: .5em;
+
+    @media only screen and (min-device-width: 480px) and (max-device-width: 720px) {
+      font-size: 1em;
+    }
+
+    @media only screen and (min-device-width: 720px) {
+      font-size: 2em;
+    }
+
+    .metadata {
+      background: none;
+    }
+
+    .link {
+      align-self: flex-end;
+
+      a {
+        color: $secondaryFocus;
+      }
+
+      .button {
+        padding: 0 1em;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.index-row-link {
+  display: flex;
+  flex: 1;
+  text-decoration: none;
 }
 
 // SHOW STYLES
+
+section {
+  margin-left: auto;
+  margin-right: auto;
+}

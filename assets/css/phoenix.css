@@ -18,10 +18,10 @@ h6{font-size: 1.4rem; letter-spacing: 0; line-height: 1.2}
 pre{padding: 1em;}
 
 .container {
-  margin: 0 auto;
+  /* margin: 0 auto;
   padding: 0 2.0rem;
   position: relative;
-  width: 100%;
+  width: 100%; */
 }
 
 select {
