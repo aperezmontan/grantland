@@ -61,6 +61,7 @@ config :grantland, GrantlandWeb.Endpoint,
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
       ~r"lib/grantland_web/(live|views)/.*(ex)$",
+      ~r"lib/grantland_web/live/.*(sface)$",
       ~r"lib/grantland_web/templates/.*(eex)$"
     ]
   ]
