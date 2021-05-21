@@ -10,28 +10,17 @@
     <script defer phx-track-static type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.0/gsap.min.js"></script>
   </head>
-  <body phx-update="ignore">
-    <section class="background-container" phx-update="ignore">
-      <div class="left sidebar"><div class="logo"><p>Grantland</p></div></div>
-      <div class="background-top"></div>
-      <div class="background-boxes-container">
-        <%= Enum.map(1..100, fn x -> %>
-          <div class="background-box box-<%= x %>">
-          </div>
-        <% end) %>
-      </div>
-      <div class="right sidebar"><div class="logo"><p>Grantland</p></div></div>
-      <div class="background-bottom"></div>
-    </section>
+  <body>
     <section class="layout">
+      <div class="header">
+        <h1>Grantland</h1>
+        <div class="hero-logo">
+          <div class="slogan">Let's Play</div>
+        </div>
+      </div>
+
       <nav class="nav">
-        <%# <%= render "_links.html", assigns %>
-          <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-            <%# <li> %>
-            <%= #link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %>
-            <%# </li> %>
-          <% end %>
-          <%= #render "_user_menu.html", assigns %>
+        <%= render "_user_menu.html", assigns %>
       </nav>
 
       <%= @inner_content %>

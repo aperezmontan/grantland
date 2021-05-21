@@ -51,4 +51,12 @@ defmodule GrantlandWeb.LiveHelpers do
          %User{} = user <- Identity.get_user_by_session_token(user_token),
          do: user
   end
+
+  def users_path?([]) do
+    false
+  end
+
+  def users_path?([first_element | _]) do
+    first_element == "users"
+  end
 end
