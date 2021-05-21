@@ -8,6 +8,7 @@ defmodule Grantland.Engine.Ruleset do
 
   defstruct state: :initialized,
             pool_type: :knockout,
+            # TODO: remove this. Should get number of rounds from picks_per_round
             rounds: 1,
             picks_per_round: %{"round_1" => 1}
 

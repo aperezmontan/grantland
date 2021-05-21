@@ -13,6 +13,7 @@ defmodule Grantland.Engine.Pool do
         values: Ruleset.valid_pool_states(),
         default: :initialized
 
+      # TODO: move this up to pool. A pool should know it's pool_type. Shouldn't be dependent on the ruleset.
       field :pool_type, Ecto.Enum,
         values: Ruleset.valid_pool_types(),
         default: :knockout
