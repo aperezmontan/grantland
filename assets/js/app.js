@@ -2,7 +2,6 @@
 // The MiniCssExtractPlugin is used to separate it out into
 // its own CSS file.
 import "../css/app.scss"
-import * as animateCSSGrid from "./animate-css-grid.js"
 
 // webpack automatically bundles all modules in your
 // entry points. Those entry points can be configured
@@ -41,7 +40,7 @@ function clearAlert() {
 
   main.classList.replace("page-enter-active", "page-leave-active")
 // debugger
-  Array.from({length: 12}, (x, i) => i).map((number) => {
+  // Array.from({length: 12}, (x, i) => i).map((number) => {
     // gsap.to(`.box-${number*6+1}`, {
     //   duration: .9,
     //   y: 200,
@@ -72,7 +71,7 @@ function clearAlert() {
     //   x: 200,
     //   scale: 1
     // })
-  });
+  // });
 
   topbar.show()
 });
@@ -80,34 +79,34 @@ function clearAlert() {
 window.addEventListener("phx:page-loading-stop", info => {
   console.log("LOADING STOP INFO", info)
 
-  main.classList.replace("page-leave-active", "page-enter-active")
+  // main.classList.replace("page-leave-active", "page-enter-active")
 
-  gsap
-  .timeline()
-  .from('.rando', {
-    z: 200,
-    duration: .1,
-    scale: 2,
-    ease: 'power'
-  })
-  .from('.random', {
-    z: -1200,
-    duration: .2,
-    scale: .0005,
-    ease: 'power'
-  })
-  .from('.more-random', {
-    x: -500,
-    duration: .3,
-    scale: .5,
-    ease: 'power'
-  })
-  .from('.tiny-random', {
-    x: 500,
-    duration: .5,
-    scale: .5,
-    ease: 'power'
-  })
+  // gsap
+  // .timeline()
+  // .from('.rando', {
+  //   z: 200,
+  //   duration: .1,
+  //   scale: 2,
+  //   ease: 'power'
+  // })
+  // .from('.random', {
+  //   z: -1200,
+  //   duration: .2,
+  //   scale: .0005,
+  //   ease: 'power'
+  // })
+  // .from('.more-random', {
+  //   x: -500,
+  //   duration: .3,
+  //   scale: .5,
+  //   ease: 'power'
+  // })
+  // .from('.tiny-random', {
+  //   x: 500,
+  //   duration: .5,
+  //   scale: .5,
+  //   ease: 'power'
+  // })
 
   // Array.from({length: 12}, (x, i) => i).map((number) => {
   //   gsap
@@ -148,31 +147,31 @@ window.addEventListener("phx:page-loading-stop", info => {
   //   })
   // })
 
-  gsap.from('.entries', {
-    y: 200,
-    scale: 1,
-    ease: 'power'
-  })
+  // gsap.from('.entries', {
+  //   y: 200,
+  //   scale: 1,
+  //   ease: 'power'
+  // })
 
-  gsap.from('.pools', {
-        y: 200,
-        scale: 1,
-        ease: 'power'
-      })
+  // gsap.from('.pools', {
+  //       y: 200,
+  //       scale: 1,
+  //       ease: 'power'
+  //     })
 
-      gsap.from('.games', {
-            y: 200,
-            scale: 1,
-            ease: 'power'
-          })
+  //     gsap.from('.games', {
+  //           y: 200,
+  //           scale: 1,
+  //           ease: 'power'
+  //         })
 
-          gsap.timeline({
-            defaults: { 
-              duration: 3 
-            }
-          }).from('.phx-modal', {
-            opacity: 0,
-          })
+  //         gsap.timeline({
+  //           defaults: { 
+  //             duration: 3 
+  //           }
+  //         }).from('.phx-modal', {
+  //           opacity: 0,
+  //         })
 
 
   topbar.hide()
