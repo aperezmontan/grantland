@@ -13,14 +13,12 @@
 </div>
 <%= for pool <- @pools do %>
   <div class="pools index-row">
-    <%= live_redirect pool.name, to: Routes.pool_show_path(@socket, :show, pool), id: "pool-#{pool.id}", class: "index-row-link" %>
+    <%= live_redirect pool.name, to: Routes.pool_show_path(@socket, :show, pool), id: "pool-#{pool.id}", class: "button" %>
     <div class="secondary">
       <div class="metadata">
         Entries: <%= Enum.count(pool.entries) %>
       </div>
-      <div class="link button">
-        <%= live_redirect "Join", to: Routes.pool_show_path(@socket, :show, pool), id: "pool-#{pool.id}" %>
-      </div>
+      </br>
     </div>
   </div>
 <% end %>

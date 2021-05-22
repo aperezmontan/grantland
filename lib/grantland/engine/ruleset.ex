@@ -57,46 +57,32 @@ defmodule Grantland.Engine.Ruleset do
   @doc false
   def changeset(ruleset \\ %Ruleset{}, attrs) do
     ruleset
-    |> cast(attrs, [:state, :pool_type, :rounds, :picks_per_round])
-    |> validate_required([:state, :pool_type, :rounds, :picks_per_round])
-    |> validate_number(:rounds, greater_than_or_equal_to: 1)
+    |> cast(attrs, [:state, :pool_type, :picks_per_round])
+    |> validate_required([:state, :pool_type, :picks_per_round])
     |> validate_inclusion(:state, @valid_pool_states)
     |> validate_inclusion(:pool_type, @valid_pool_types)
     |> maybe_validate_picks_per_round(ruleset)
   end
 
   defp maybe_validate_picks_per_round(%{changes: changes} = changeset, ruleset) do
-    case Map.has_key?(changes, :rounds) || Map.has_key?(changes, :picks_per_round) do
+    case Map.has_key?(changes, :picks_per_round) do
       true -> validate_picks_per_round(changeset, ruleset)
       false -> changeset
     end
   end
 
   defp validate_picks_per_round(%{changes: changes} = changeset, ruleset) do
-    rounds = changes[:rounds] || ruleset.rounds
     picks_per_round = changes[:picks_per_round] || ruleset.picks_per_round
 
-    case check_picks_per_round_keys(rounds, picks_per_round) do
-      true ->
-        case check_picks_per_round_values(rounds, picks_per_round) do
-          true -> changeset
-          false -> add_error(changeset, :picks_per_round, "Is incorrect")
-        end
-
-      false ->
-        add_error(changeset, :picks_per_round, "All rounds must have number of picks")
+    case check_picks_per_round(picks_per_round) do
+      true -> changeset
+      false -> add_error(changeset, :picks_per_round, "Is incorrect")
     end
   end
 
-  defp check_picks_per_round_keys(rounds, picks_per_round) do
-    Enum.all?(1..rounds, fn round_number ->
-      Map.has_key?(picks_per_round, "round_#{round_number}")
-    end)
-  end
-
-  defp check_picks_per_round_values(rounds, picks_per_round) do
-    Enum.all?(1..rounds, fn round_number ->
-      picks_per_round["round_#{round_number}"] |> picks_number_valid?
+  defp check_picks_per_round(picks_per_round) do
+    Enum.all?(Map.values(picks_per_round), fn picks ->
+      picks_number_valid?(picks)
     end)
   end
 

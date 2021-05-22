@@ -13,6 +13,18 @@
     return_to: Routes.pool_show_path(@socket, :show, @pool) %>
 <% end %>
 
+<%= if @live_action in [:new_entry, :edit_entry] do %>
+  <%= entry_action = if @live_action == :new_entry, do: :new, else: :edit %>
+  <%= live_modal @socket, GrantlandWeb.EntryLive.FormComponent,
+    id: @entry.id || :new,
+    title: @page_title,
+    action: entry_action,
+    entry: @entry,
+    pool: @pool,
+    current_user: @current_user,
+    return_to: Routes.pool_show_path(@socket, :show, @pool) %>
+<% end %>
+
 <ul>
   <li>
     <strong>Name:</strong>
@@ -21,10 +33,6 @@
   <li>
     <strong>Pool type:</strong>
     <%= Phoenix.Naming.humanize(@pool.ruleset.pool_type) %>
-  </li>
-  <li>
-    <strong>Rounds:</strong>
-    <%= @pool.ruleset.rounds %>
   </li>
 </ul>
 
@@ -68,7 +76,7 @@
     <strong>Entries</strong>
   </div>
   <div>
-    <a href="#" phx-click="add-variant">Enter this pool</a>
+    <span><%= live_patch "Enter this pool", to: Routes.pool_show_path(@socket, :new_entry, @pool), class: "button" %></span>
   </div>
   <%= case @pool.entries do %>
   <% [] -> %>
@@ -101,7 +109,7 @@
               <% end %>
             </td>
             <td>
-              <span><%= live_patch "Edit", to: Routes.pool_show_path(@socket, :edit, entry), class: "button" %></span>
+              <span><%= live_patch "Edit", to: Routes.pool_show_path(@socket, :edit_entry, @pool, entry), class: "button" %></span>
             </td>
           </tr>
         <% end %>

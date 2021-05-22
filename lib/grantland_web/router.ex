@@ -86,20 +86,19 @@ defmodule GrantlandWeb.Router do
     put "/users/settings", UserSettingsController, :update
     get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
 
-    live "/pools/:id/show/entries/:id/show/edit", PoolLive.Show, :edit
-    live "/pools/:id/show/entries/new", PoolLive.Show, :new
-
     # Entries
     live "/entries/new", EntryLive.Index, :new
     live "/entries/:id/edit", EntryLive.Index, :edit
-    # TOOD: Figure out what route this is?
     live "/entries/:id/show/edit", EntryLive.Show, :edit
 
     # Pools
     live "/pools/new", PoolLive.Index, :new
     live "/pools/:id/edit", PoolLive.Index, :edit
-    # TOOD: Figure out what route this is?
     live "/pools/:id/show/edit", PoolLive.Show, :edit
+
+    # Pool entries
+    live "/pools/:id/show/entries/:entry_id/show/edit", PoolLive.Show, :edit_entry
+    live "/pools/:id/show/entries/new", PoolLive.Show, :new_entry
 
     # Users
     live "/users", UserLive.Index, :index
@@ -107,7 +106,6 @@ defmodule GrantlandWeb.Router do
     live "/users/:id/edit", UserLive.Index, :edit
 
     live "/users/:id", UserLive.Show, :show
-    # TOOD: Figure out what route this is?
     live "/users/:id/show/edit", UserLive.Show, :edit
 
     delete "/users/log_out", UserSessionController, :delete

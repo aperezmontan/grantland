@@ -8,12 +8,11 @@
     <%= live_title_tag assigns[:page_title] || "Grantland" %>
     <link phx-track-static rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
     <script defer phx-track-static type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.0/gsap.min.js"></script>
   </head>
   <body>
     <section class="layout">
       <div class="header">
-        <h1>Grantland</h1>
+        <h1><a href="/">Grantland</a></h1>
         <div class="hero-logo">
           <div class="slogan">Let's Play</div>
         </div>

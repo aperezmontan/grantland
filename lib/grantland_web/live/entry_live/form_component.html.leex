@@ -10,17 +10,13 @@
   <%= text_input f, :name %>
   <%= error_tag f, :name %>
 
-  <%# TODO: May or may not need this %>
-  <%# <%= label f, :round %>
-  <%# <%= number_input f, :round %>
-  <%# <%= error_tag f, :round %>
-<% IO.inspect(@options_for_round, label: "THE OPTIONS") %>
-  <%= label f, :pool %>
-  <%# TODO: move this to view helper %>
-  <%= select f, :pool_id, Enum.map(@pools, &{&1.name, &1.id}) %>
-  <%= error_tag f, :pool %>
-
-  <%# TODO: move this to view helper %>
+  <%= if @entry.pool_id do %>
+    <%= hidden_input f, :pool_id, value: @entry.pool_id %>
+  <% else %>
+    <%= label f, :pool %>
+    <%= select f, :pool_id, Enum.map(@pools, &{&1.name, &1.id}) %>
+    <%= error_tag f, :pool %>
+  <% end %>
 
   <div>
     <%= submit "Save", phx_disable_with: "Saving..." %>

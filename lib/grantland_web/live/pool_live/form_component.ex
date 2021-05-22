@@ -58,7 +58,7 @@ defmodule GrantlandWeb.PoolLive.FormComponent do
     pool_params = Map.put(pool_params, "user_id", current_user.id)
 
     game_ids =
-      pool_params["games"]
+      (pool_params["games"] || [])
       |> Enum.map(fn game_id ->
         {int_game_id, ""} = Integer.parse(game_id)
         int_game_id

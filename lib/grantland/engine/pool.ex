@@ -18,8 +18,7 @@ defmodule Grantland.Engine.Pool do
         values: Ruleset.valid_pool_types(),
         default: :knockout
 
-      field :rounds, :integer, min: 1, default: 1
-      field :picks_per_round, :map, default: %{}
+      field :picks_per_round, :map, default: %{"round_1" => 1}
     end
 
     belongs_to :user, Grantland.Identity.User
