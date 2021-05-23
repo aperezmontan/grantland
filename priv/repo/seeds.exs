@@ -65,37 +65,43 @@ Grantland.Identity.User
 Grantland.Engine.activate_pool(%{
   name: "admin_box_pool",
   user_id: admin_user.id,
-  ruleset: %Grantland.Engine.Ruleset{pool_type: :box}
+  type: :box,
+  ruleset: %Grantland.Engine.Ruleset{}
 })
 
 Grantland.Engine.activate_pool(%{
   name: "admin_knockout_pool",
   user_id: admin_user.id,
-  ruleset: %Grantland.Engine.Ruleset{pool_type: :knockout}
+  type: :knockout,
+  ruleset: %Grantland.Engine.Ruleset{}
 })
 
 Grantland.Engine.activate_pool(%{
   name: "moderator_box_pool",
   user_id: moderator_user.id,
-  ruleset: %Grantland.Engine.Ruleset{pool_type: :box}
+  type: :box,
+  ruleset: %Grantland.Engine.Ruleset{}
 })
 
 Grantland.Engine.activate_pool(%{
   name: "moderator_knockout_pool",
   user_id: moderator_user.id,
-  ruleset: %Grantland.Engine.Ruleset{pool_type: :knockout}
+  type: :knockout,
+  ruleset: %Grantland.Engine.Ruleset{}
 })
 
 Grantland.Engine.activate_pool(%{
   name: "user_box_pool",
   user_id: user_user.id,
-  ruleset: %Grantland.Engine.Ruleset{pool_type: :box}
+  type: :box,
+  ruleset: %Grantland.Engine.Ruleset{}
 })
 
 Grantland.Engine.activate_pool(%{
   name: "user_knockout_pool",
   user_id: user_user.id,
-  ruleset: %Grantland.Engine.Ruleset{pool_type: :knockout}
+  type: :knockout,
+  ruleset: %Grantland.Engine.Ruleset{}
 })
 
 {:ok, time} = DateTime.now("Etc/UTC")

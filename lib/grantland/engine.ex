@@ -274,7 +274,7 @@ defmodule Grantland.Engine do
 
   """
   def list_pool_types do
-    Ruleset.valid_pool_types()
+    Pool.valid_types()
   end
 
   @doc """

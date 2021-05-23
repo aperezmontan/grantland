@@ -10,14 +10,14 @@
   <%= text_input f, :name %>
   <%= error_tag f, :name %>
 
+  <%= label f, :type %>
+  <%= select f, :type, Enum.map(@pool_types, &{String.capitalize(Atom.to_string(&1)), &1}) %>
+  <%= error_tag f, :type %>
+
   <%= inputs_for f, :ruleset, fn r -> %>
     <div class="form-group">
 
-      <%= label r, :pool_type %>
-      <%= select r, :pool_type, Enum.map(@pool_types, &{String.capitalize(Atom.to_string(&1)), &1}) %>
-      <%= error_tag r, :pool_type %>
-
-      <%= if ((is_nil(r.params["pool_type"]) && r.data.pool_type == :knockout) || (r.params["pool_type"] == "knockout")) do %>
+      <%= if ((is_nil(f.params["type"]) && f.data.type == :knockout) || (f.params["type"] == "knockout")) do %>
         <%= label r, :picks_per_round %>
         <% picks_per_round = if is_nil(r.params["picks_per_round"]), do: r.data.picks_per_round, else: r.params["picks_per_round"] %>
 
@@ -25,6 +25,8 @@
           <span>Round <%= String.slice(round_name, 6..-1) %></span>
           <input id="pool-form_ruleset_picks_per_<%= round_name %>" min="1" name="pool[ruleset][picks_per_round][<%= round_name %>]" type="number" value=<%= number_of_picks %>>
         <% end %>
+      <% else %>
+        <input id="pool-form_ruleset_picks_per_round_1" type="hidden" min="1" name="pool[ruleset][picks_per_round][round_1]" type="number" value=1>
       <% end %>
     </div>
   <% end %>

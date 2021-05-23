@@ -4,19 +4,14 @@ defmodule Grantland.Engine.Ruleset do
   alias __MODULE__
 
   @valid_pool_states [:initialized, :in_progress, :completed]
-  @valid_pool_types [:box, :knockout]
 
   defstruct state: :initialized,
-            pool_type: :knockout,
-            # TODO: remove this. Should get number of rounds from picks_per_round
-            rounds: 1,
             picks_per_round: %{"round_1" => 1}
 
   def new(attrs \\ %{}), do: struct(Ruleset, attrs)
 
   def valid_actions, do: [:add_entry, :start_pool, :complete_pool]
   def valid_pool_states, do: @valid_pool_states
-  def valid_pool_types, do: @valid_pool_types
 
   # THE ECTO STUFF
   use Ecto.Type
@@ -35,13 +30,6 @@ defmodule Grantland.Engine.Ruleset do
   def load(data) when is_map(data) do
     data =
       for {key, val} <- data do
-        # TODO: This is how we return atom values. Clean this up.
-        val =
-          case key == "pool_type" || key == "state" do
-            true -> String.to_existing_atom(val)
-            false -> val
-          end
-
         {String.to_existing_atom(key), val}
       end
 
@@ -57,10 +45,9 @@ defmodule Grantland.Engine.Ruleset do
   @doc false
   def changeset(ruleset \\ %Ruleset{}, attrs) do
     ruleset
-    |> cast(attrs, [:state, :pool_type, :picks_per_round])
-    |> validate_required([:state, :pool_type, :picks_per_round])
+    |> cast(attrs, [:state, :picks_per_round])
+    |> validate_required([:state, :picks_per_round])
     |> validate_inclusion(:state, @valid_pool_states)
-    |> validate_inclusion(:pool_type, @valid_pool_types)
     |> maybe_validate_picks_per_round(ruleset)
   end
 

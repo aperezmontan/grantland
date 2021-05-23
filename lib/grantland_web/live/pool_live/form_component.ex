@@ -81,6 +81,7 @@ defmodule GrantlandWeb.PoolLive.FormComponent do
   end
 
   defp save_pool(socket, :new, pool_params) do
+    IO.inspect(pool_params, label: "ATTEMPTING TO SAVE")
     current_user = socket.assigns.current_user
     pool_params = Map.put(pool_params, "user_id", current_user.id)
 
@@ -92,6 +93,7 @@ defmodule GrantlandWeb.PoolLive.FormComponent do
          |> push_redirect(to: socket.assigns.return_to)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
+        IO.inspect(changeset, label: "THE ERRORS")
         {:noreply, assign(socket, changeset: changeset)}
     end
   end

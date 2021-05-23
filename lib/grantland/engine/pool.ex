@@ -4,19 +4,23 @@ defmodule Grantland.Engine.Pool do
 
   alias Grantland.Engine.Ruleset
 
+  @valid_types [:box, :knockout]
+
   schema "pools" do
     field :name, :string
+
+    field :type, Ecto.Enum,
+      values: [
+        :box,
+        :knockout
+      ],
+      default: :knockout
 
     embeds_one :ruleset, Ruleset, on_replace: :update do
       # TODO: check if these defaults and mins are actually respected. Probably just using the defstruct in Ruleset
       field :state, Ecto.Enum,
         values: Ruleset.valid_pool_states(),
         default: :initialized
-
-      # TODO: move this up to pool. A pool should know it's pool_type. Shouldn't be dependent on the ruleset.
-      field :pool_type, Ecto.Enum,
-        values: Ruleset.valid_pool_types(),
-        default: :knockout
 
       field :picks_per_round, :map, default: %{"round_1" => 1}
     end
@@ -29,13 +33,16 @@ defmodule Grantland.Engine.Pool do
     timestamps()
   end
 
+  def valid_types, do: @valid_types
+
   @doc false
   def changeset(pool, attrs) do
     pool
-    |> cast(attrs, [:name, :user_id])
+    |> cast(attrs, [:name, :user_id, :type])
+    |> validate_inclusion(:type, @valid_types)
     |> cast_embed(:ruleset, with: &ruleset_changeset/2)
     |> cast_assoc(:entries)
-    |> validate_required([:ruleset, :name, :user_id])
+    |> validate_required([:ruleset, :name, :user_id, :type])
     |> validate_length(:name, min: 3)
     |> unique_constraint(:name)
   end
