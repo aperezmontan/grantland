@@ -40,6 +40,8 @@ defmodule GrantlandWeb.EntryLive.FormComponent do
 
   @impl true
   def handle_event("validate", %{"entry" => entry_params}, socket) do
+    IO.inspect(entry_params, label: "THE ENTRY PARAMS !!")
+
     changeset =
       socket.assigns.entry
       |> Engine.change_entry(entry_params)

@@ -18,6 +18,46 @@
     <%= error_tag f, :pool %>
   <% end %>
 
+  <% IO.inspect(@pool.ruleset, label: "THE RULESET") %>
+  <% IO.inspect(@pool.ruleset, label: "THE RULESET") %>
+
+  <div class="games-list-in-pool-show">
+    <strong>Games for Round 1</strong>
+    <%= case @games_for_next_round do %>
+    <% [] -> %>
+      <div>
+        No games selected
+      </div>
+    <% games -> %>
+      <table>
+        <thead>
+          <tr>
+            <th>Home team</th>
+            <th>Away team</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody id="games_for_next_round">
+          <%= inputs_for f, :picks, [default: %{}], fn fp -> %>
+            <%= for game <- games do %>
+              <tr>
+                <td>
+                  <%= label fp, :round_1, game.home_team %>
+                  <%= checkbox fp, :round_1 %>
+                </td>
+                <td>
+                  <%= label fp, :round_1, game.away_team %>
+                  <%= checkbox fp, :round_1 %>
+                </td>
+                <td><%= game.time %></td>
+              </tr>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+
   <div>
     <%= submit "Save", phx_disable_with: "Saving..." %>
   </div>

@@ -11,7 +11,8 @@ defmodule GrantlandWeb.PoolLive.FormComponent do
     games =
       Data.list_games_with_team_name() |> Enum.map(&{"#{&1.away_team} at #{&1.home_team}", &1.id})
 
-    socket = assign(socket, pool_types: pool_types, games: games)
+    socket = assign(socket, pool_types: pool_types, games: games, number_of_rounds: 1)
+
     {:ok, socket}
   end
 
@@ -38,12 +39,23 @@ defmodule GrantlandWeb.PoolLive.FormComponent do
   end
 
   @impl true
+  def handle_event("dec_round_number", _params, socket) do
+    {:noreply, update(socket, :number_of_rounds, &(&1 - 1))}
+  end
+
+  @impl true
+  def handle_event("inc_round_number", _params, socket) do
+    {:noreply, update(socket, :number_of_rounds, &(&1 + 1))}
+  end
+
+  @impl true
   def handle_event("validate", %{"pool" => pool_params}, socket) do
+    # IO.inspect(pool_params, label: "THE pool_params")
+
     changeset =
       socket.assigns.pool
       |> Engine.change_pool(pool_params)
       |> Map.put(:action, :validate)
-      |> IO.inspect(label: "THE CHANGESET")
 
     {:noreply,
      socket |> assign(selected_games: pool_params["games"]) |> assign(:changeset, changeset)}
